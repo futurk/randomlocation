@@ -26,7 +26,12 @@ const RandomLocationMap = () => {
     lat: number;
     lng: number;
   } | null>(null);
-  const [isDarkMode, setIsDarkMode] = useState<boolean>(true);
+  const [isDarkMode, setIsDarkMode] = useState<boolean>(() => {
+    if (typeof window !== "undefined" && typeof window.matchMedia === "function") {
+      return window.matchMedia("(prefers-color-scheme: dark)").matches;
+    }
+    return false;
+  });
   const [isLocating, setIsLocating] = useState<boolean>(false);
   const [copied, setCopied] = useState<boolean>(false);
   const [showOnboardingHelp, setShowOnboardingHelp] = useState<boolean>(true);
