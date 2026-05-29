@@ -1,123 +1,106 @@
-# Random Location Application
+# GeoRandom Adventure Generator
 
 ## Introduction
 
-The Random Location application displays a random location on a map within a specified radius from the user's current location or a manually entered location. This tool provides an interactive way to visualize different geographical areas.
+**GeoRandom** (formerly *Random Location*) is a modern, responsive web application designed to help you discover random geographic locations within a specified radius from any custom center point. 
+
+The application has been completely redesigned with a premium **glassmorphic floating dashboard** layout, on-demand geolocation, interactive map clicks, and real-time geofence boundaries.
+
+Visit the live application at [https://pappater.github.io/randomlocation/](https://pappater.github.io/randomlocation/) to see it in action.
+
+---
+
+## 🎨 App Screenshots
 
 ![Random Location App in light mode](./public/light.png)
 ![Random Location App in dark mode](./public/dark.png)
 
-## Tech Stack Used
+---
 
-- **React:** For building the user interface.
-- **TypeScript:** For type safety and better development experience.
-- **Tailwind CSS:** For styling and responsive design.
-- **Leaflet:** For rendering the interactive map.
-- **Lucide React:** For integrating various icons.
-- **gh-pages:** For deploying the application to GitHub Pages.
+## ⚡ Tech Stack
 
-## Functionality and Usage
+- **Vite:** Next-generation frontend tooling providing blazing-fast HMR and building.
+- **React (v18):** For building the component-based, stateful user interface.
+- **TypeScript:** For absolute type safety and a robust development experience.
+- **Tailwind CSS:** For clean, modern glassmorphic layouts and responsive design.
+- **React Leaflet (v4) & Leaflet (v1.9):** High-performance interactive map engine.
+- **Lucide React:** For clean, modern iconography.
+- **Vitest & JSDOM:** For rapid, reliable unit testing.
+- **gh-pages:** Automated pipeline publishing directly to GitHub Pages.
 
-- **Radius Selection:** Choose a radius from a dropdown list or enter a custom radius.
-- **Location Entry:** Manually enter a location or use the browser’s geolocation.
-- **Random Location:** Display a random location within the specified radius on the map.
+---
 
-Visit the application at [https://pappater.github.io/randomlocation/](https://pappater.github.io/randomlocation/) to see it in action.
+## 🌟 Premium Features
 
-## Responsiveness
+- **📍 Tap-to-Center Map Interaction**: Set your target search area instantly by clicking or tapping anywhere on the map—no manual typing required.
+- **🛰️ On-Demand Geolocation**: Respects your privacy. Your browser location is only fetched when you explicitly click the **"Locate Me"** button.
+- **⭕ Dynamic Search Boundary (Geofence)**: Visually renders a semi-transparent, styled radius boundary on the map, illustrating the exact search zone.
+- **🎲 Manual/Explicit Generation**: Random locations are only calculated when you explicitly hit the **"Generate Random Location"** button.
+- **🎛️ Dual-Device Layouts**:
+  - **Desktop**: A sleek, translucent glassmorphic control card floating on top of the map.
+  - **Mobile**: A modern bottom-drawer sheet accessible near thumbs, optimized for one-handed mobile use.
+- **📋 Copy & External Navigation**: Copy your generated coordinates instantly to your clipboard with custom confirmation feedback, or click to open them directly in **Google Maps**.
+- **☀️ Light & Dark Themes**: Fully integrated system supporting dark mode and light mode color spaces.
 
-The application is designed to be fully responsive, adjusting to various screen sizes and orientations to ensure a seamless experience across different devices.
+---
 
-## Building the App
+## 🛠️ Installation & Setup
 
-### Key Packages
+### 1. Clone the repository
+```bash
+git clone https://github.com/pappater/randomlocation.git
+cd randomlocation
+```
 
-- **`gh-pages` (v6.1.1):** Used for deploying the application to GitHub Pages. This package helps publish your project directly from the `gh-pages` branch.
-- **`leaflet` (v1.9.4):** A leading open-source JavaScript library for interactive maps. It provides an easy-to-use API to create and manage maps.
-- **`lucide-react` (v0.441.0):** Provides a collection of icons for React, allowing easy integration of various icons in the application’s UI.
+### 2. Install dependencies
+```bash
+npm install
+```
 
-### Deployment with `gh-pages`
+### 3. Run the application locally
+To launch the Vite development server:
+```bash
+npm run dev
+```
+Open your browser and navigate to `http://localhost:5173/randomlocation/`.
 
-1. **Install `gh-pages`:**
+---
 
-   ```bash
-   npm install gh-pages --save-dev
-   ```
+## 📈 Scripts
 
-2. **Add deployment scripts to `package.json`:**
+Inside the project, you can run the following commands:
 
-   ```json
-   "scripts": {
-     "predeploy": "npm run build",
-     "deploy": "gh-pages -d build"
-   }
-   ```
+- **`npm run dev`**: Starts the local development server with Vite.
+- **`npm run build`**: Compiles TypeScript definitions and builds production assets inside the `/dist` directory.
+- **`npm run test`**: Runs the unit test suite using **Vitest**.
+- **`npm run deploy`**: Bundles the application for production and publishes it directly to your GitHub Pages branch.
 
-3. **Deploy the application:**
+---
 
+## 🚀 Deployment with GitHub Pages
+
+Deployment is automated via `gh-pages` and Vite:
+
+1. To compile the latest code and deploy to your GitHub Pages URL, execute:
    ```bash
    npm run deploy
    ```
+2. The package will compile TypeScript, build assets to the `/dist` folder, and publish that directory to your repository's `gh-pages` branch.
 
-4. **Verify the deployment** by visiting the provided GitHub Pages URL.
+---
 
-## Installation Instructions
+## 📝 Changelog
 
-1. **Clone the repository:**
-
-   ```bash
-   git clone https://github.com/pappater/randomlocation.git
-   ```
-
-2. **Navigate to the project directory:**
-
-   ```bash
-   cd randomlocation
-   ```
-
-3. **Install dependencies:**
-
-   ```bash
-   npm install
-   ```
-
-4. **Run the application locally:**
-   ```bash
-   npm start
-   ```
-
-## Usage Instructions
-
-- Open the application in your browser.
-- Select or enter a radius.
-- Choose a location option (manual or geolocation).
-- View the random location on the map.
-
-## Configuration
-
-- **Environment Variables:** If applicable, document any required environment variables or configuration files.
-
-## Troubleshooting
-
-- **Common Issues:**
-
-  - **Issue:** Application does not load.
-
-    - **Solution:** Ensure all dependencies are installed and the `npm start` command is executed in the project directory.
-
-  - **Issue:** Map does not display.
-    - **Solution:** Check the Leaflet integration and ensure API keys or tokens are correctly configured.
-
-## Contribution Guidelines
-
-- **Code Style:** Follow the project’s coding standards and use ESLint for linting.
-- **Submitting Changes:** Use pull requests to submit changes. Ensure to provide a description of the changes and any related issues.
-
-## Changelog
-
-- **[Version 1.0.0]** Initial release with basic features.
+- **[Version 2.0.0]**
+  - Deprecated and removed legacy `create-react-app` (`react-scripts`).
+  - Migrated the entire build and development pipeline to **Vite** and **Vitest**.
+  - Re-implemented the interface from scratch, introducing floating glassmorphic dashboards, absolute bottom-sheets for mobile, explicit click-to-generate mechanics, interactive map clicks, geofence boundary drawings, and custom vector pins.
 - **[Version 1.1.0]** Added custom radius input and improved map responsiveness.
+- **[Version 1.0.0]** Initial release built using create-react-app.
 
-## Node Version
+---
 
-The application is developed using Node.js version v20.15.0.
+## 💻 Environment & Compatibility
+
+- **Node.js**: Recommended Version `v20.x.x` or later.
+- **TypeScript**: Compatibility set to target `ESNext` with standard Vite modular resolution patterns.
