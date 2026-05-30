@@ -111,7 +111,7 @@ const RandomLocationMap = () => {
     : "bg-neutral-50/90 border-neutral-200";
 
   return (
-    <div className={`h-screen flex flex-col overflow-hidden font-sans ${isDarkMode ? "bg-neutral-950 text-white" : "bg-neutral-100 text-neutral-900"}`}>
+    <div className={`h-screen h-[100dvh] flex flex-col overflow-hidden font-sans ${isDarkMode ? "bg-neutral-950 text-white" : "bg-neutral-100 text-neutral-900"}`}>
       {/* Premium minimal header */}
       <header className={`h-16 px-6 flex justify-between items-center border-b transition-colors duration-300 z-10 ${
         isDarkMode ? "bg-neutral-900/40 border-neutral-800/50" : "bg-white/40 border-neutral-200/50"
@@ -263,8 +263,8 @@ const RandomLocationMap = () => {
         </div>
 
         {/* Mobile floating panel bottom sheet */}
-        <div className="absolute bottom-0 left-0 right-0 z-[999] md:hidden">
-          <div className={`rounded-t-2xl border-t shadow-2xl p-4 space-y-4 transition-all duration-300 ${panelBg}`}>
+        <div className="absolute bottom-4 left-4 right-4 z-[999] md:hidden">
+          <div className={`rounded-2xl border shadow-2xl p-4 space-y-4 transition-all duration-300 ${panelBg}`}>
             <div className="flex items-center justify-between">
               <span className="text-xs font-bold tracking-wider uppercase opacity-80 flex items-center gap-1.5">
                 <MapPin size={14} className="text-blue-500" />
