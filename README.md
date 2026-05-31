@@ -6,7 +6,7 @@
 
 The application has been completely redesigned with a premium **glassmorphic floating dashboard** layout, on-demand geolocation, interactive map clicks, and real-time geofence boundaries.
 
-Visit the live application at https://futurk.github.io/randomlocation/ to see it in action.
+Visit the live application at [https://futurk.github.io/randomlocation/](https://futurk.github.io/randomlocation/) to see it in action.
 
 ---
 
@@ -23,6 +23,7 @@ Visit the live application at https://futurk.github.io/randomlocation/ to see it
 - **React (v18):** For building the component-based, stateful user interface.
 - **TypeScript:** For absolute type safety and a robust development experience.
 - **Tailwind CSS:** For clean, modern glassmorphic layouts and responsive design.
+- **Vite PWA Plugin:** Enables offline caching, auto-updating, and full mobile installability (PWA) via modern Workbox Service Workers.
 - **React Leaflet (v4) & Leaflet (v1.9):** High-performance interactive map engine.
 - **Lucide React:** For clean, modern iconography.
 - **Vitest & JSDOM:** For rapid, reliable unit testing.
@@ -36,15 +37,35 @@ Visit the live application at https://futurk.github.io/randomlocation/ to see it
 - **🛰️ On-Demand Geolocation**: Respects your privacy. Your browser location is only fetched when you explicitly click the **"Locate Me"** button.
 - **⭕ Dynamic Search Boundary (Geofence)**: Visually renders a semi-transparent, styled radius boundary on the map, illustrating the exact search zone.
 - **🎲 Manual/Explicit Generation**: Random locations are only calculated when you explicitly hit the **"Generate Random Location"** button.
+- **📲 Mobile Installable (PWA)**: Install GeoRandom directly to your home screen on iOS and Android to launch it as a full-screen, native-like app.
 - **🎛️ Dual-Device Layouts**:
   - **Desktop**: A sleek, translucent glassmorphic control card floating on top of the map.
-  - **Mobile**: A modern bottom-drawer sheet accessible near thumbs, optimized for one-handed mobile use.
+  - **Mobile**: A highly compact, bottom-floating 2-row panel optimized for Bromite/Chromium toolbar safety.
 - **📋 Copy & External Navigation**: Copy your generated coordinates instantly to your clipboard with custom confirmation feedback, or click to open them directly in **Google Maps**.
-- **☀️ Light & Dark Themes**: Fully integrated system supporting dark mode and light mode color spaces.
+- **☀️ Light & Dark Themes**: Fully integrated system supporting dark mode and light mode color spaces, initializing dynamically from your **system preference**.
 
 ---
 
-## 🛠️ Installation & Setup
+## 📲 Progressive Web App (PWA) Installation
+
+You can install **GeoRandom** on your mobile devices and desktop to run it as a standalone, fullscreen native application:
+
+### 🤖 On Android (Chrome / Bromite / Brave)
+1. Navigate to [https://futurk.github.io/randomlocation/](https://futurk.github.io/randomlocation/) in your browser.
+2. Tap the **"Add to Home Screen"** banner that appears at the bottom, or click the browser menu (three vertical dots in the top-right/bottom-right) and select **"Install App"**.
+
+### 🍏 On iOS (Safari)
+1. Navigate to [https://futurk.github.io/randomlocation/](https://futurk.github.io/randomlocation/) in Safari.
+2. Tap the **Share** button (box with an upward arrow 📤) in the bottom toolbar.
+3. Scroll down and tap **"Add to Home Screen"** (plus icon ➕).
+
+### 💻 On Desktop (Chrome / Edge / Opera)
+1. Navigate to [https://futurk.github.io/randomlocation/](https://futurk.github.io/randomlocation/).
+2. Click the **Install** monitor icon in the right-hand side of your browser's address bar.
+
+---
+
+## 🛠️ Installation & Setup (Local Development)
 
 ### 1. Clone the repository
 ```bash
@@ -71,7 +92,7 @@ Open your browser and navigate to `http://localhost:5173/randomlocation/`.
 Inside the project, you can run the following commands:
 
 - **`npm run dev`**: Starts the local development server with Vite.
-- **`npm run build`**: Compiles TypeScript definitions and builds production assets inside the `/dist` directory.
+- **`npm run build`**: Compiles TypeScript definitions, builds production assets, and generates PWA Service Workers inside the `/dist` directory.
 - **`npm run test`**: Runs the unit test suite using **Vitest**.
 - **`npm run deploy`**: Bundles the application for production and publishes it directly to your GitHub Pages branch.
 
@@ -95,6 +116,7 @@ Deployment is automated via `gh-pages` and Vite:
   - Deprecated and removed legacy `create-react-app` (`react-scripts`).
   - Migrated the entire build and development pipeline to **Vite** and **Vitest**.
   - Re-implemented the interface from scratch, introducing floating glassmorphic dashboards, absolute bottom-sheets for mobile, explicit click-to-generate mechanics, interactive map clicks, geofence boundary drawings, and custom vector pins.
+  - Added full **PWA Installability** on Android, iOS, and Desktop with offline capability.
 - **[Version 1.1.0]** Added custom radius input and improved map responsiveness.
 - **[Version 1.0.0]** Initial release built using create-react-app.
 
