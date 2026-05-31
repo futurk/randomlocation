@@ -264,90 +264,94 @@ const RandomLocationMap = () => {
 
         {/* Mobile floating panel bottom sheet */}
         <div className="absolute bottom-4 left-4 right-4 z-[999] md:hidden">
-          <div className={`rounded-2xl border shadow-2xl p-4 space-y-4 transition-all duration-300 ${panelBg}`}>
-            <div className="flex items-center justify-between">
-              <span className="text-xs font-bold tracking-wider uppercase opacity-80 flex items-center gap-1.5">
-                <MapPin size={14} className="text-blue-500" />
-                Center point
-              </span>
-              <button
-                onClick={handleLocateMe}
-                disabled={isLocating}
-                className="text-xs font-semibold px-2.5 py-1 rounded-lg border flex items-center gap-1 bg-blue-500/10 border-blue-500/20 text-blue-400"
-              >
-                <Navigation size={12} className={isLocating ? "animate-spin" : ""} />
-                {isLocating ? "Locating..." : "Locate Me"}
-              </button>
-            </div>
-
-            <div className="grid grid-cols-12 gap-2">
-              <input
-                type="text"
-                value={locationInput}
-                placeholder="Tap map or type Lat, Lng"
-                onChange={(e) => handleLocationInputChange(e.target.value)}
-                className={`col-span-8 px-3.5 py-2.5 rounded-xl border text-sm font-mono focus:outline-none ${
-                  isDarkMode
-                    ? "bg-neutral-950/60 border-neutral-800 text-white placeholder-neutral-600"
-                    : "bg-white border-neutral-300 text-neutral-900 placeholder-neutral-400"
-                }`}
-              />
-              <div className={`col-span-4 rounded-xl border flex items-center justify-between px-2 font-mono text-xs font-bold ${
-                isDarkMode ? "bg-neutral-950/60 border-neutral-800 text-blue-400" : "bg-white border-neutral-300 text-blue-600"
-              }`}>
-                <span>Radius</span>
-                <span>{radius}k</span>
-              </div>
-            </div>
-
-            {/* Mini slider */}
-            <input
-              type="range"
-              min="1"
-              max="100"
-              value={radius}
-              onChange={(e) => setRadius(Number(e.target.value))}
-              className="w-full h-1 bg-neutral-200 dark:bg-neutral-800 rounded-lg appearance-none cursor-pointer accent-blue-500"
-            />
-
-            {/* Generated display inside the bottom sheet */}
+          <div className={`rounded-xl border shadow-xl p-3.5 space-y-2.5 transition-all duration-300 ${panelBg}`}>
+            {/* Generated display inside the bottom sheet (Single Line) */}
             {randomLocation && (
-              <div className={`p-3 rounded-xl border flex items-center justify-between text-xs font-mono font-bold mb-3 ${cardBg}`}>
-                <div className="flex flex-col">
-                  <span className="text-[9px] font-bold text-red-500 uppercase">Generated Position</span>
-                  <span>{randomLocation.lat.toFixed(5)}, {randomLocation.lng.toFixed(5)}</span>
-                </div>
+              <div className={`px-2.5 py-1.5 rounded-lg border flex items-center justify-between text-xs font-mono font-bold ${cardBg}`}>
+                <span className="truncate opacity-90">🎲 {randomLocation.lat.toFixed(5)}, {randomLocation.lng.toFixed(5)}</span>
                 <div className="flex items-center space-x-1.5">
                   <button
                     onClick={copyToClipboard}
-                    className="p-2 hover:bg-neutral-200 dark:hover:bg-neutral-800 rounded-lg text-neutral-400 hover:text-white"
+                    className="p-1 hover:bg-neutral-200 dark:hover:bg-neutral-800 rounded text-neutral-400 hover:text-white"
+                    title="Copy Coordinates"
                   >
-                    {copied ? <Check size={14} className="text-green-500" /> : <Copy size={14} />}
+                    {copied ? <Check size={12} className="text-green-500" /> : <Copy size={12} />}
                   </button>
                   <a
                     href={`https://www.google.com/maps?q=${randomLocation.lat},${randomLocation.lng}`}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="p-2 hover:bg-neutral-200 dark:hover:bg-neutral-800 rounded-lg text-blue-500"
+                    className="p-1 hover:bg-neutral-200 dark:hover:bg-neutral-800 rounded text-blue-500"
+                    title="Open in Maps"
                   >
-                    <ExternalLink size={14} />
+                    <ExternalLink size={12} />
                   </a>
                 </div>
               </div>
             )}
 
-            <button
-              onClick={generateRandomLocation}
-              disabled={!userLocation}
-              className={`w-full py-2.5 rounded-xl font-bold text-xs tracking-wide transition-all flex items-center justify-center gap-1.5 ${
-                userLocation
-                  ? "bg-blue-600 text-white shadow-lg shadow-blue-600/10 active:scale-[0.98]"
-                  : "bg-neutral-200 dark:bg-neutral-800 text-neutral-400 dark:text-neutral-600 cursor-not-allowed"
-              }`}
-            >
-              <RefreshCw size={14} />
-              Generate Random Location
-            </button>
+            {/* Row 1: Coordinates Input, Locate Me, and Generate Actions */}
+            <div className="flex items-center space-x-2">
+              <div className="relative flex-1">
+                <input
+                  type="text"
+                  value={locationInput}
+                  placeholder="Tap map or type Lat, Lng"
+                  onChange={(e) => handleLocationInputChange(e.target.value)}
+                  className={`w-full px-3 py-2 rounded-lg border text-xs font-mono focus:outline-none ${
+                    isDarkMode
+                      ? "bg-neutral-950/60 border-neutral-800 text-white placeholder-neutral-600"
+                      : "bg-white border-neutral-300 text-neutral-900 placeholder-neutral-400"
+                  }`}
+                />
+              </div>
+
+              <button
+                onClick={handleLocateMe}
+                disabled={isLocating}
+                className={`p-2 rounded-lg border flex items-center justify-center transition-all ${
+                  isDarkMode
+                    ? "bg-blue-500/10 border-blue-500/20 text-blue-400 hover:bg-blue-500/20"
+                    : "bg-blue-50 border-blue-100 text-blue-600 hover:bg-blue-100"
+                } ${isLocating ? "cursor-wait opacity-50" : ""}`}
+                title="Locate Me"
+              >
+                <Navigation size={13} className={isLocating ? "animate-spin" : ""} />
+              </button>
+
+              <button
+                onClick={generateRandomLocation}
+                disabled={!userLocation}
+                className={`px-3 py-2 rounded-lg font-bold text-xs tracking-wide transition-all flex items-center justify-center gap-1 shadow-md shrink-0 ${
+                  userLocation
+                    ? "bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-500 hover:to-indigo-500 text-white active:scale-[0.95]"
+                    : "bg-neutral-200 dark:bg-neutral-800 text-neutral-400 dark:text-neutral-600 cursor-not-allowed shadow-none"
+                }`}
+                title="Generate Random Location"
+              >
+                <Sparkles size={12} />
+                <span>Generate</span>
+              </button>
+            </div>
+
+            {/* Row 2: Range Slider & Selection Badge */}
+            <div className="flex items-center space-x-3">
+              <div className="flex-1 flex items-center">
+                <input
+                  type="range"
+                  min="1"
+                  max="100"
+                  value={radius}
+                  onChange={(e) => setRadius(Number(e.target.value))}
+                  className="w-full h-1 bg-neutral-200 dark:bg-neutral-800 rounded-lg appearance-none cursor-pointer accent-blue-500 focus:outline-none"
+                />
+              </div>
+              <div className={`px-2 py-0.5 rounded-md font-mono text-[11px] font-bold border shrink-0 ${
+                isDarkMode ? "bg-blue-500/10 border-blue-500/20 text-blue-400" : "bg-blue-50 border-blue-100 text-blue-600"
+              }`}>
+                {radius} km
+              </div>
+            </div>
           </div>
         </div>
 
