@@ -57,10 +57,14 @@ const MapController: React.FC<{
           [centerLat, centerLng],
           [randomLat, randomLng]
         );
-        map.fitBounds(bounds, { padding: [50, 50], maxZoom: 13, animate: true });
+        // Solution B: Use the current map zoom level as the maximum zoom cap.
+        // This allows zooming out if the pins are too far apart, but completely
+        // prevents zooming in closer than where the user is currently viewing.
+        const currentZoom = map.getZoom();
+        map.fitBounds(bounds, { padding: [60, 60], maxZoom: currentZoom, animate: true });
       } else {
-        // Smoothly pan to the new center
-        map.setView([centerLat, centerLng], 13, { animate: true });
+        // Smoothly pan to the new center at default zoom 12
+        map.setView([centerLat, centerLng], 12, { animate: true });
       }
     }
   }, [centerLat, centerLng, randomLat, randomLng, map]);
