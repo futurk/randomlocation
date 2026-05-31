@@ -6,7 +6,7 @@
 
 The application has been completely redesigned with a premium **glassmorphic floating dashboard** layout, on-demand geolocation, interactive map clicks, and real-time geofence boundaries.
 
-Visit the live application at [https://pappater.github.io/randomlocation/](https://pappater.github.io/randomlocation/) to see it in action.
+Visit the live application at https://futurk.github.io/randomlocation/ to see it in action.
 
 ---
 
