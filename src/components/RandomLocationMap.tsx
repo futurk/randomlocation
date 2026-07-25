@@ -38,6 +38,7 @@ const RandomLocationMap = () => {
   const [showOnboardingHelp, setShowOnboardingHelp] = useState<boolean>(true);
 
   const handleMinRadiusChange = (val: number) => {
+    if (isNaN(val)) return;
     const newMin = Math.max(0, Math.min(val, 500));
     setMinRadius(newMin);
     if (newMin > maxRadius) {
@@ -46,6 +47,7 @@ const RandomLocationMap = () => {
   };
 
   const handleMaxRadiusChange = (val: number) => {
+    if (isNaN(val)) return;
     const newMax = Math.max(0, Math.min(val, 500));
     setMaxRadius(newMax);
     if (newMax < minRadius) {
@@ -229,7 +231,7 @@ const RandomLocationMap = () => {
               />
             </div>
 
-            {/* Min and Max Radius Sliders */}
+            {/* Min and Max Radius Sliders with Editable Inputs */}
             <div className="space-y-3 mb-5">
               <div className="flex justify-between items-center text-xs font-semibold">
                 <span className="opacity-80">SEARCH BOUNDARIES</span>
@@ -238,32 +240,62 @@ const RandomLocationMap = () => {
                 </span>
               </div>
 
-              {/* Min Radius Slider */}
+              {/* Min Radius Control */}
               <div className="space-y-1">
-                <div className="flex justify-between text-[11px] font-medium opacity-80">
+                <div className="flex justify-between items-center text-[11px] font-medium opacity-80">
                   <span>Min Radius</span>
-                  <span className="font-mono text-amber-500 font-bold">{minRadius} km</span>
+                  <div className="flex items-center space-x-1">
+                    <input
+                      type="number"
+                      min="0"
+                      max="500"
+                      value={minRadius}
+                      onChange={(e) => handleMinRadiusChange(Number(e.target.value))}
+                      className={`w-16 px-1.5 py-0.5 rounded border text-right font-mono font-bold text-amber-500 text-xs focus:outline-none focus:ring-1 focus:ring-amber-500 ${
+                        isDarkMode
+                          ? "bg-neutral-950/60 border-neutral-800 text-amber-500"
+                          : "bg-white border-neutral-300 text-amber-600"
+                      }`}
+                    />
+                    <span className="text-xs font-bold text-amber-500">km</span>
+                  </div>
                 </div>
                 <input
                   type="range"
                   min="0"
                   max="500"
+                  step="10"
                   value={minRadius}
                   onChange={(e) => handleMinRadiusChange(Number(e.target.value))}
                   className="w-full h-1.5 bg-neutral-200 dark:bg-neutral-800 rounded-lg appearance-none cursor-pointer accent-amber-500 focus:outline-none"
                 />
               </div>
 
-              {/* Max Radius Slider */}
+              {/* Max Radius Control */}
               <div className="space-y-1">
-                <div className="flex justify-between text-[11px] font-medium opacity-80">
+                <div className="flex justify-between items-center text-[11px] font-medium opacity-80">
                   <span>Max Radius</span>
-                  <span className="font-mono text-blue-500 font-bold">{maxRadius} km</span>
+                  <div className="flex items-center space-x-1">
+                    <input
+                      type="number"
+                      min="0"
+                      max="500"
+                      value={maxRadius}
+                      onChange={(e) => handleMaxRadiusChange(Number(e.target.value))}
+                      className={`w-16 px-1.5 py-0.5 rounded border text-right font-mono font-bold text-blue-500 text-xs focus:outline-none focus:ring-1 focus:ring-blue-500 ${
+                        isDarkMode
+                          ? "bg-neutral-950/60 border-neutral-800 text-blue-400"
+                          : "bg-white border-neutral-300 text-blue-600"
+                      }`}
+                    />
+                    <span className="text-xs font-bold text-blue-500">km</span>
+                  </div>
                 </div>
                 <input
                   type="range"
                   min="0"
                   max="500"
+                  step="10"
                   value={maxRadius}
                   onChange={(e) => handleMaxRadiusChange(Number(e.target.value))}
                   className="w-full h-1.5 bg-neutral-200 dark:bg-neutral-800 rounded-lg appearance-none cursor-pointer accent-blue-500 focus:outline-none"
@@ -426,34 +458,58 @@ const RandomLocationMap = () => {
               </button>
             </div>
 
-            {/* Row 2: Dual Range Sliders for Min and Max Radius */}
+            {/* Row 2: Dual Range Sliders for Min and Max Radius with Editable Inputs */}
             <div className="flex items-center space-x-2 text-xs">
-              <div className="flex-1 flex items-center space-x-1.5">
-                <span className="text-[10px] font-bold opacity-75 shrink-0">Min</span>
+              <div className="flex-1 flex items-center space-x-1">
+                <span className="text-[9px] font-bold opacity-75 shrink-0">Min</span>
                 <input
                   type="range"
                   min="0"
                   max="500"
+                  step="10"
                   value={minRadius}
                   onChange={(e) => handleMinRadiusChange(Number(e.target.value))}
                   className="w-full h-1 bg-neutral-200 dark:bg-neutral-800 rounded-lg appearance-none cursor-pointer accent-amber-500 focus:outline-none"
                 />
-                <span className="font-mono text-[10px] font-bold text-amber-500 shrink-0">{minRadius}k</span>
+                <input
+                  type="number"
+                  min="0"
+                  max="500"
+                  value={minRadius}
+                  onChange={(e) => handleMinRadiusChange(Number(e.target.value))}
+                  className={`w-11 px-1 py-0.5 rounded border text-center font-mono text-[10px] font-bold text-amber-500 shrink-0 focus:outline-none ${
+                    isDarkMode
+                      ? "bg-neutral-950/60 border-neutral-800 text-amber-500"
+                      : "bg-white border-neutral-300 text-amber-600"
+                  }`}
+                />
               </div>
 
               <div className="w-[1px] h-4 bg-neutral-300 dark:bg-neutral-700 shrink-0" />
 
-              <div className="flex-1 flex items-center space-x-1.5">
-                <span className="text-[10px] font-bold opacity-75 shrink-0">Max</span>
+              <div className="flex-1 flex items-center space-x-1">
+                <span className="text-[9px] font-bold opacity-75 shrink-0">Max</span>
                 <input
                   type="range"
                   min="0"
                   max="500"
+                  step="10"
                   value={maxRadius}
                   onChange={(e) => handleMaxRadiusChange(Number(e.target.value))}
                   className="w-full h-1 bg-neutral-200 dark:bg-neutral-800 rounded-lg appearance-none cursor-pointer accent-blue-500 focus:outline-none"
                 />
-                <span className="font-mono text-[10px] font-bold text-blue-500 shrink-0">{maxRadius}k</span>
+                <input
+                  type="number"
+                  min="0"
+                  max="500"
+                  value={maxRadius}
+                  onChange={(e) => handleMaxRadiusChange(Number(e.target.value))}
+                  className={`w-11 px-1 py-0.5 rounded border text-center font-mono text-[10px] font-bold text-blue-500 shrink-0 focus:outline-none ${
+                    isDarkMode
+                      ? "bg-neutral-950/60 border-neutral-800 text-blue-400"
+                      : "bg-white border-neutral-300 text-blue-600"
+                  }`}
+                />
               </div>
             </div>
           </div>
