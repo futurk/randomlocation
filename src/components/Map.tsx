@@ -2,7 +2,7 @@ import React, { useEffect } from "react";
 import { MapContainer, TileLayer, Marker, Popup, Circle, useMap, useMapEvents } from "react-leaflet";
 import L from "leaflet";
 import "leaflet/dist/leaflet.css";
-import { getDistanceInKm, formatDistance } from "./helpers";
+import { getDistanceInKm, formatDistance, getGoogleMapsUrl, getKomootUrl, TravelMode } from "./helpers";
 
 interface MapProps {
   centerLat: number | null;
@@ -11,6 +11,7 @@ interface MapProps {
   randomLng: number | null;
   minRadius: number; // in km
   maxRadius: number; // in km
+  travelMode?: TravelMode;
   isDarkMode: boolean;
   onMapClick: (lat: number, lng: number) => void;
 }
@@ -90,6 +91,7 @@ const Map: React.FC<MapProps> = ({
   randomLng,
   minRadius,
   maxRadius,
+  travelMode = "cycling",
   isDarkMode,
   onMapClick,
 }) => {
@@ -186,17 +188,25 @@ const Map: React.FC<MapProps> = ({
               </span>
               {calculatedDistance !== null && (
                 <div className="text-[11px] text-neutral-500 dark:text-neutral-400 font-medium my-1">
-                  Distance: <span className="font-bold text-blue-600 dark:text-blue-400">{formatDistance(calculatedDistance)}</span> from center
+                  Distance: <span className="font-bold text-blue-600 dark:text-blue-400">{formatDistance(calculatedDistance)}</span>
                 </div>
               )}
-              <div className="mt-2 border-t pt-2 flex flex-col gap-1 text-xs">
+              <div className="mt-2 border-t pt-2 flex flex-col gap-1.5 text-xs font-medium">
                 <a
-                  href={`https://www.google.com/maps?q=${randomLat},${randomLng}`}
+                  href={getGoogleMapsUrl(centerLat, centerLng, randomLat, randomLng, travelMode)}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="text-blue-500 hover:underline font-medium"
+                  className="text-blue-500 hover:underline flex items-center justify-center gap-1"
                 >
-                  Open in Google Maps
+                  <span>🗺️ Google Maps Directions</span>
+                </a>
+                <a
+                  href={getKomootUrl(centerLat, centerLng, randomLat, randomLng, travelMode)}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="text-emerald-600 dark:text-emerald-400 hover:underline flex items-center justify-center gap-1"
+                >
+                  <span>💚 Komoot Tour Planner</span>
                 </a>
               </div>
             </div>

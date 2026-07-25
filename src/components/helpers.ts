@@ -1,3 +1,5 @@
+export type TravelMode = "cycling" | "walking" | "driving";
+
 // Utility function to calculate a random point within a minimum and maximum radius (annulus ring area)
 export const getRandomLocation = (
   lat: number,
@@ -57,4 +59,44 @@ export const formatDistance = (distInKm: number): string => {
     return `${Math.round(distInKm * 1000)} m`;
   }
   return `${distInKm.toFixed(2)} km`;
+};
+
+// Generate Google Maps routing URL with Origin (Center), Destination, and Travel Mode
+export const getGoogleMapsUrl = (
+  originLat: number | null,
+  originLng: number | null,
+  destLat: number,
+  destLng: number,
+  mode: TravelMode = "cycling"
+): string => {
+  const modeMap: Record<TravelMode, string> = {
+    cycling: "bicycling",
+    walking: "walking",
+    driving: "driving",
+  };
+
+  if (originLat !== null && originLng !== null) {
+    return `https://www.google.com/maps/dir/?api=1&origin=${originLat},${originLng}&destination=${destLat},${destLng}&travelmode=${modeMap[mode]}`;
+  }
+  return `https://www.google.com/maps?q=${destLat},${destLng}`;
+};
+
+// Generate Komoot Tour Planner URL with Waypoint 1 (Center Origin), Waypoint 2 (Destination), and Sport Mode
+export const getKomootUrl = (
+  originLat: number | null,
+  originLng: number | null,
+  destLat: number,
+  destLng: number,
+  mode: TravelMode = "cycling"
+): string => {
+  const sportMap: Record<TravelMode, string> = {
+    cycling: "touringbicycle",
+    walking: "hike",
+    driving: "touringbicycle",
+  };
+
+  if (originLat !== null && originLng !== null) {
+    return `https://www.komoot.com/plan?sport=${sportMap[mode]}&waypoint=${originLat},${originLng}&waypoint=${destLat},${destLng}`;
+  }
+  return `https://www.komoot.com/plan/@${destLat},${destLng},14z`;
 };
