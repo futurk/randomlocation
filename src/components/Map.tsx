@@ -8,7 +8,8 @@ interface MapProps {
   centerLng: number | null;
   randomLat: number | null;
   randomLng: number | null;
-  radius: number; // in km
+  minRadius: number; // in km
+  maxRadius: number; // in km
   isDarkMode: boolean;
   onMapClick: (lat: number, lng: number) => void;
 }
@@ -57,9 +58,6 @@ const MapController: React.FC<{
           [centerLat, centerLng],
           [randomLat, randomLng]
         );
-        // Solution B: Use the current map zoom level as the maximum zoom cap.
-        // This allows zooming out if the pins are too far apart, but completely
-        // prevents zooming in closer than where the user is currently viewing.
         const currentZoom = map.getZoom();
         map.fitBounds(bounds, { padding: [60, 60], maxZoom: currentZoom, animate: true });
       } else {
@@ -89,11 +87,12 @@ const Map: React.FC<MapProps> = ({
   centerLng,
   randomLat,
   randomLng,
-  radius,
+  minRadius,
+  maxRadius,
   isDarkMode,
   onMapClick,
 }) => {
-  // Fallback initial center if nothing is loaded (defaults to Paris center coordinates for aesthetic starting place instead of Null Island)
+  // Fallback initial center if nothing is loaded (defaults to Paris center coordinates)
   const defaultCenterLat = 48.8566;
   const defaultCenterLng = 2.3522;
 
@@ -106,7 +105,7 @@ const Map: React.FC<MapProps> = ({
       zoom={12}
       scrollWheelZoom={true}
       style={{ height: "100%", width: "100%", borderRadius: "0.75rem", overflow: "hidden" }}
-      zoomControl={false} // We will use standard zoom or let Leaflet handle it, but moving it is nice. We will keep it enabled but styled well.
+      zoomControl={false}
     >
       <TileLayer
         url={
@@ -140,17 +139,32 @@ const Map: React.FC<MapProps> = ({
         </Marker>
       )}
 
-      {/* Geofence Search Circle */}
-      {centerLat !== null && centerLng !== null && (
+      {/* Outer Geofence Circle (Max Radius) */}
+      {centerLat !== null && centerLng !== null && maxRadius > 0 && (
         <Circle
           center={[centerLat, centerLng]}
-          radius={radius * 1000} // radius in meters
+          radius={maxRadius * 1000} // radius in meters
           pathOptions={{
             color: isDarkMode ? "#3B82F6" : "#2563EB",
             fillColor: isDarkMode ? "#60A5FA" : "#3B82F6",
-            fillOpacity: 0.12,
+            fillOpacity: 0.1,
             weight: 2,
             dashArray: "4, 6",
+          }}
+        />
+      )}
+
+      {/* Inner Exclusion Circle (Min Radius) */}
+      {centerLat !== null && centerLng !== null && minRadius > 0 && minRadius < maxRadius && (
+        <Circle
+          center={[centerLat, centerLng]}
+          radius={minRadius * 1000} // radius in meters
+          pathOptions={{
+            color: isDarkMode ? "#F59E0B" : "#D97706",
+            fillColor: isDarkMode ? "#171717" : "#F5F5F5",
+            fillOpacity: 0.35,
+            weight: 2,
+            dashArray: "3, 5",
           }}
         />
       )}
