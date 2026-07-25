@@ -2,7 +2,7 @@ import React, { useEffect } from "react";
 import { MapContainer, TileLayer, Marker, Popup, Circle, useMap, useMapEvents } from "react-leaflet";
 import L from "leaflet";
 import "leaflet/dist/leaflet.css";
-import { getDistanceInKm, formatDistance, getGoogleMapsUrl, getKomootUrl, TravelMode } from "./helpers";
+import { getDistanceInKm, formatDistance, getGoogleMapsUrl, getKomootUrl } from "./helpers";
 
 interface MapProps {
   centerLat: number | null;
@@ -11,7 +11,6 @@ interface MapProps {
   randomLng: number | null;
   minRadius: number; // in km
   maxRadius: number; // in km
-  travelMode?: TravelMode;
   isDarkMode: boolean;
   onMapClick: (lat: number, lng: number) => void;
 }
@@ -91,7 +90,6 @@ const Map: React.FC<MapProps> = ({
   randomLng,
   minRadius,
   maxRadius,
-  travelMode = "cycling",
   isDarkMode,
   onMapClick,
 }) => {
@@ -193,20 +191,20 @@ const Map: React.FC<MapProps> = ({
               )}
               <div className="mt-2 border-t pt-2 flex flex-col gap-1.5 text-xs font-medium">
                 <a
-                  href={getGoogleMapsUrl(centerLat, centerLng, randomLat, randomLng, travelMode)}
+                  href={getGoogleMapsUrl(randomLat, randomLng)}
                   target="_blank"
                   rel="noopener noreferrer"
                   className="text-blue-500 hover:underline flex items-center justify-center gap-1"
                 >
-                  <span>🗺️ Google Maps Directions</span>
+                  <span>🗺️ Open in Google Maps</span>
                 </a>
                 <a
-                  href={getKomootUrl(centerLat, centerLng, randomLat, randomLng, travelMode)}
+                  href={getKomootUrl(randomLat, randomLng)}
                   target="_blank"
                   rel="noopener noreferrer"
                   className="text-emerald-600 dark:text-emerald-400 hover:underline flex items-center justify-center gap-1"
                 >
-                  <span>💚 Komoot Tour Planner</span>
+                  <span>💚 Open in Komoot</span>
                 </a>
               </div>
             </div>

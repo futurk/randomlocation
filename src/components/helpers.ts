@@ -1,5 +1,3 @@
-export type TravelMode = "cycling" | "walking" | "driving";
-
 // Utility function to calculate a random point within a minimum and maximum radius (annulus ring area)
 export const getRandomLocation = (
   lat: number,
@@ -61,39 +59,18 @@ export const formatDistance = (distInKm: number): string => {
   return `${distInKm.toFixed(2)} km`;
 };
 
-// Generate Google Maps routing URL with Origin (Center), Destination, and Travel Mode
+// Generate default Google Maps location URL
 export const getGoogleMapsUrl = (
-  originLat: number | null,
-  originLng: number | null,
   destLat: number,
-  destLng: number,
-  mode: TravelMode = "cycling"
+  destLng: number
 ): string => {
-  const modeMap: Record<TravelMode, string> = {
-    cycling: "bicycling",
-    walking: "walking",
-    driving: "driving",
-  };
-
-  if (originLat !== null && originLng !== null) {
-    return `https://www.google.com/maps/dir/?api=1&origin=${originLat},${originLng}&destination=${destLat},${destLng}&travelmode=${modeMap[mode]}`;
-  }
-  return `https://www.google.com/maps?q=${destLat},${destLng}`;
+  return `https://www.google.com/maps?q=${destLat.toFixed(6)},${destLng.toFixed(6)}`;
 };
 
-// Generate Komoot Tour Planner URL centered on Destination with Sport Mode
+// Generate default Komoot Tour Planner URL (default sport: touringbicycle)
 export const getKomootUrl = (
-  _originLat: number | null,
-  _originLng: number | null,
   destLat: number,
-  destLng: number,
-  mode: TravelMode = "cycling"
+  destLng: number
 ): string => {
-  const sportMap: Record<TravelMode, string> = {
-    cycling: "touringbicycle",
-    walking: "hike",
-    driving: "touringbicycle",
-  };
-
-  return `https://www.komoot.com/plan/@${destLat.toFixed(6)},${destLng.toFixed(6)},14z?sport=${sportMap[mode]}`;
+  return `https://www.komoot.com/plan/@${destLat.toFixed(6)},${destLng.toFixed(6)},14z?sport=touringbicycle`;
 };

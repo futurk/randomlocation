@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { getRandomLocation, getDistanceInKm, formatDistance, getGoogleMapsUrl, getKomootUrl, TravelMode } from "./helpers";
+import { getRandomLocation, getDistanceInKm, formatDistance, getGoogleMapsUrl, getKomootUrl } from "./helpers";
 import Map from "./Map";
 import {
   Moon,
@@ -13,15 +13,11 @@ import {
   Check,
   ExternalLink,
   Info,
-  Bike,
-  Footprints,
-  Car,
 } from "lucide-react";
 
 const RandomLocationMap = () => {
   const [minRadius, setMinRadius] = useState<number>(2); // Default min 2 km
   const [maxRadius, setMaxRadius] = useState<number>(20); // Default max 20 km
-  const [travelMode, setTravelMode] = useState<TravelMode>("cycling");
   const [userLocation, setUserLocation] = useState<{
     lat: number;
     lng: number;
@@ -185,7 +181,6 @@ const RandomLocationMap = () => {
             randomLng={randomLocation?.lng ?? null}
             minRadius={minRadius}
             maxRadius={maxRadius}
-            travelMode={travelMode}
             isDarkMode={isDarkMode}
             onMapClick={handleMapClick}
           />
@@ -232,48 +227,6 @@ const RandomLocationMap = () => {
                     : "bg-white border-neutral-300 text-neutral-900 placeholder-neutral-400"
                 }`}
               />
-            </div>
-
-            {/* Travel Mode Selector */}
-            <div className="space-y-1.5 mb-4">
-              <label className="text-xs font-semibold tracking-wider uppercase opacity-80 block">
-                Travel Mode
-              </label>
-              <div className="grid grid-cols-3 gap-1.5 p-1 rounded-xl bg-neutral-100 dark:bg-neutral-950/60 border border-neutral-200 dark:border-neutral-800">
-                <button
-                  onClick={() => setTravelMode("cycling")}
-                  className={`py-1.5 px-2 rounded-lg text-xs font-semibold flex items-center justify-center gap-1.5 transition-all ${
-                    travelMode === "cycling"
-                      ? "bg-blue-600 text-white shadow"
-                      : "text-neutral-500 hover:text-neutral-900 dark:text-neutral-400 dark:hover:text-white"
-                  }`}
-                >
-                  <Bike size={14} />
-                  <span>Cycling</span>
-                </button>
-                <button
-                  onClick={() => setTravelMode("walking")}
-                  className={`py-1.5 px-2 rounded-lg text-xs font-semibold flex items-center justify-center gap-1.5 transition-all ${
-                    travelMode === "walking"
-                      ? "bg-blue-600 text-white shadow"
-                      : "text-neutral-500 hover:text-neutral-900 dark:text-neutral-400 dark:hover:text-white"
-                  }`}
-                >
-                  <Footprints size={14} />
-                  <span>Hike</span>
-                </button>
-                <button
-                  onClick={() => setTravelMode("driving")}
-                  className={`py-1.5 px-2 rounded-lg text-xs font-semibold flex items-center justify-center gap-1.5 transition-all ${
-                    travelMode === "driving"
-                      ? "bg-blue-600 text-white shadow"
-                      : "text-neutral-500 hover:text-neutral-900 dark:text-neutral-400 dark:hover:text-white"
-                  }`}
-                >
-                  <Car size={14} />
-                  <span>Drive</span>
-                </button>
-              </div>
             </div>
 
             {/* Min and Max Radius Sliders */}
@@ -362,7 +315,7 @@ const RandomLocationMap = () => {
 
                 <div className="pt-2 border-t border-neutral-200 dark:border-neutral-700/60 flex flex-col gap-2">
                   <a
-                    href={getGoogleMapsUrl(userLocation?.lat ?? null, userLocation?.lng ?? null, randomLocation.lat, randomLocation.lng, travelMode)}
+                    href={getGoogleMapsUrl(randomLocation.lat, randomLocation.lng)}
                     target="_blank"
                     rel="noopener noreferrer"
                     className="inline-flex items-center justify-center gap-1.5 px-3 py-2 rounded-lg bg-blue-500/10 hover:bg-blue-500/20 text-blue-500 text-xs font-bold transition-all border border-blue-500/20"
@@ -371,7 +324,7 @@ const RandomLocationMap = () => {
                     Open in Google Maps
                   </a>
                   <a
-                    href={getKomootUrl(userLocation?.lat ?? null, userLocation?.lng ?? null, randomLocation.lat, randomLocation.lng, travelMode)}
+                    href={getKomootUrl(randomLocation.lat, randomLocation.lng)}
                     target="_blank"
                     rel="noopener noreferrer"
                     className="inline-flex items-center justify-center gap-1.5 px-3 py-2 rounded-lg bg-emerald-500/10 hover:bg-emerald-500/20 text-emerald-500 text-xs font-bold transition-all border border-emerald-500/20"
@@ -408,7 +361,7 @@ const RandomLocationMap = () => {
                     {copied ? <Check size={12} className="text-green-500" /> : <Copy size={12} />}
                   </button>
                   <a
-                    href={getGoogleMapsUrl(userLocation?.lat ?? null, userLocation?.lng ?? null, randomLocation.lat, randomLocation.lng, travelMode)}
+                    href={getGoogleMapsUrl(randomLocation.lat, randomLocation.lng)}
                     target="_blank"
                     rel="noopener noreferrer"
                     className="px-1.5 py-0.5 rounded bg-blue-500/10 text-blue-500 hover:bg-blue-500/20 text-[10px] font-bold"
@@ -417,7 +370,7 @@ const RandomLocationMap = () => {
                     Maps
                   </a>
                   <a
-                    href={getKomootUrl(userLocation?.lat ?? null, userLocation?.lng ?? null, randomLocation.lat, randomLocation.lng, travelMode)}
+                    href={getKomootUrl(randomLocation.lat, randomLocation.lng)}
                     target="_blank"
                     rel="noopener noreferrer"
                     className="px-1.5 py-0.5 rounded bg-emerald-500/10 text-emerald-500 hover:bg-emerald-500/20 text-[10px] font-bold"
@@ -473,36 +426,10 @@ const RandomLocationMap = () => {
               </button>
             </div>
 
-            {/* Row 2: Travel Mode icons + Dual Range Sliders */}
+            {/* Row 2: Dual Range Sliders for Min and Max Radius */}
             <div className="flex items-center space-x-2 text-xs">
-              <div className="flex items-center rounded-lg bg-neutral-100 dark:bg-neutral-950/60 p-0.5 border border-neutral-200 dark:border-neutral-800 shrink-0">
-                <button
-                  onClick={() => setTravelMode("cycling")}
-                  className={`p-1 rounded ${travelMode === "cycling" ? "bg-blue-600 text-white" : "text-neutral-400"}`}
-                  title="Cycling"
-                >
-                  <Bike size={12} />
-                </button>
-                <button
-                  onClick={() => setTravelMode("walking")}
-                  className={`p-1 rounded ${travelMode === "walking" ? "bg-blue-600 text-white" : "text-neutral-400"}`}
-                  title="Walking/Hiking"
-                >
-                  <Footprints size={12} />
-                </button>
-                <button
-                  onClick={() => setTravelMode("driving")}
-                  className={`p-1 rounded ${travelMode === "driving" ? "bg-blue-600 text-white" : "text-neutral-400"}`}
-                  title="Driving"
-                >
-                  <Car size={12} />
-                </button>
-              </div>
-
-              <div className="w-[1px] h-4 bg-neutral-300 dark:bg-neutral-700 shrink-0" />
-
-              <div className="flex-1 flex items-center space-x-1">
-                <span className="text-[9px] font-bold opacity-75 shrink-0">Min</span>
+              <div className="flex-1 flex items-center space-x-1.5">
+                <span className="text-[10px] font-bold opacity-75 shrink-0">Min</span>
                 <input
                   type="range"
                   min="0"
@@ -511,11 +438,13 @@ const RandomLocationMap = () => {
                   onChange={(e) => handleMinRadiusChange(Number(e.target.value))}
                   className="w-full h-1 bg-neutral-200 dark:bg-neutral-800 rounded-lg appearance-none cursor-pointer accent-amber-500 focus:outline-none"
                 />
-                <span className="font-mono text-[9px] font-bold text-amber-500 shrink-0">{minRadius}k</span>
+                <span className="font-mono text-[10px] font-bold text-amber-500 shrink-0">{minRadius}k</span>
               </div>
 
-              <div className="flex-1 flex items-center space-x-1">
-                <span className="text-[9px] font-bold opacity-75 shrink-0">Max</span>
+              <div className="w-[1px] h-4 bg-neutral-300 dark:bg-neutral-700 shrink-0" />
+
+              <div className="flex-1 flex items-center space-x-1.5">
+                <span className="text-[10px] font-bold opacity-75 shrink-0">Max</span>
                 <input
                   type="range"
                   min="0"
@@ -524,7 +453,7 @@ const RandomLocationMap = () => {
                   onChange={(e) => handleMaxRadiusChange(Number(e.target.value))}
                   className="w-full h-1 bg-neutral-200 dark:bg-neutral-800 rounded-lg appearance-none cursor-pointer accent-blue-500 focus:outline-none"
                 />
-                <span className="font-mono text-[9px] font-bold text-blue-500 shrink-0">{maxRadius}k</span>
+                <span className="font-mono text-[10px] font-bold text-blue-500 shrink-0">{maxRadius}k</span>
               </div>
             </div>
           </div>
