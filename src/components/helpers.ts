@@ -81,10 +81,10 @@ export const getGoogleMapsUrl = (
   return `https://www.google.com/maps?q=${destLat},${destLng}`;
 };
 
-// Generate Komoot Tour Planner URL with Waypoint 1 (Center Origin), Waypoint 2 (Destination), and Sport Mode
+// Generate Komoot Tour Planner URL centered on Destination with Sport Mode
 export const getKomootUrl = (
-  originLat: number | null,
-  originLng: number | null,
+  _originLat: number | null,
+  _originLng: number | null,
   destLat: number,
   destLng: number,
   mode: TravelMode = "cycling"
@@ -95,8 +95,5 @@ export const getKomootUrl = (
     driving: "touringbicycle",
   };
 
-  if (originLat !== null && originLng !== null) {
-    return `https://www.komoot.com/plan?sport=${sportMap[mode]}&waypoint=${originLat},${originLng}&waypoint=${destLat},${destLng}`;
-  }
-  return `https://www.komoot.com/plan/@${destLat},${destLng},14z`;
+  return `https://www.komoot.com/plan/@${destLat.toFixed(6)},${destLng.toFixed(6)},14z?sport=${sportMap[mode]}`;
 };
