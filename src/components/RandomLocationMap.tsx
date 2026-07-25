@@ -197,38 +197,39 @@ const RandomLocationMap = () => {
               Search Configuration
             </h2>
 
-            {/* Locate me & Center input */}
-            <div className="space-y-3 mb-4">
-              <div className="flex justify-between items-center">
-                <label className="text-xs font-semibold tracking-wider uppercase opacity-80 flex items-center gap-1.5">
-                  <MapPin size={14} className="text-blue-500" />
-                  Center Location
-                </label>
+            {/* Center Location input with inline Locate Me button */}
+            <div className="space-y-1.5 mb-4">
+              <label className="text-xs font-semibold tracking-wider uppercase opacity-80 flex items-center gap-1.5">
+                <MapPin size={14} className="text-blue-500" />
+                Center Location
+              </label>
+
+              <div className="relative flex items-center">
+                <input
+                  type="text"
+                  value={locationInput}
+                  placeholder="Click map or type 'Lat, Lng'"
+                  onChange={(e) => handleLocationInputChange(e.target.value)}
+                  className={`w-full pl-3.5 pr-28 py-2.5 rounded-xl border text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent font-mono shadow-inner transition-colors duration-200 ${
+                    isDarkMode
+                      ? "bg-neutral-950/60 border-neutral-800 text-white placeholder-neutral-600"
+                      : "bg-white border-neutral-300 text-neutral-900 placeholder-neutral-400"
+                  }`}
+                />
                 <button
                   onClick={handleLocateMe}
                   disabled={isLocating}
-                  className={`text-xs font-medium px-2.5 py-1 rounded-lg flex items-center gap-1 transition-all border ${
+                  className={`absolute right-1.5 text-xs font-medium px-2.5 py-1.5 rounded-lg flex items-center gap-1 transition-all border ${
                     isDarkMode
                       ? "bg-blue-500/10 border-blue-500/20 text-blue-400 hover:bg-blue-500/20"
                       : "bg-blue-50 border-blue-100 text-blue-600 hover:bg-blue-100"
-                  }`}
+                  } ${isLocating ? "cursor-wait opacity-50" : ""}`}
+                  title="Fetch Browser Location"
                 >
                   <Navigation size={12} className={isLocating ? "animate-spin" : ""} />
-                  {isLocating ? "Locating..." : "Locate Me"}
+                  <span>{isLocating ? "Locating..." : "Locate Me"}</span>
                 </button>
               </div>
-
-              <input
-                type="text"
-                value={locationInput}
-                placeholder="Click map or type 'Lat, Lng'"
-                onChange={(e) => handleLocationInputChange(e.target.value)}
-                className={`w-full px-3.5 py-2.5 rounded-xl border text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent font-mono shadow-inner transition-colors duration-200 ${
-                  isDarkMode
-                    ? "bg-neutral-950/60 border-neutral-800 text-white placeholder-neutral-600"
-                    : "bg-white border-neutral-300 text-neutral-900 placeholder-neutral-400"
-                }`}
-              />
             </div>
 
             {/* Min and Max Radius Sliders with Editable Inputs */}
@@ -414,34 +415,33 @@ const RandomLocationMap = () => {
               </div>
             )}
 
-            {/* Row 1: Coordinates Input, Locate Me, and Generate Actions */}
+            {/* Row 1: Coordinates Input with embedded GPS button, and Generate Action */}
             <div className="flex items-center space-x-2">
-              <div className="relative flex-1">
+              <div className="relative flex-1 flex items-center">
                 <input
                   type="text"
                   value={locationInput}
                   placeholder="Tap map or type Lat, Lng"
                   onChange={(e) => handleLocationInputChange(e.target.value)}
-                  className={`w-full px-3 py-2 rounded-lg border text-xs font-mono focus:outline-none ${
+                  className={`w-full pl-3 pr-9 py-2 rounded-lg border text-xs font-mono focus:outline-none ${
                     isDarkMode
                       ? "bg-neutral-950/60 border-neutral-800 text-white placeholder-neutral-600"
                       : "bg-white border-neutral-300 text-neutral-900 placeholder-neutral-400"
                   }`}
                 />
+                <button
+                  onClick={handleLocateMe}
+                  disabled={isLocating}
+                  className={`absolute right-1 p-1.5 rounded-md flex items-center justify-center transition-all ${
+                    isDarkMode
+                      ? "text-blue-400 hover:bg-blue-500/20"
+                      : "text-blue-600 hover:bg-blue-100"
+                  } ${isLocating ? "cursor-wait opacity-50" : ""}`}
+                  title="Locate Me"
+                >
+                  <Navigation size={13} className={isLocating ? "animate-spin" : ""} />
+                </button>
               </div>
-
-              <button
-                onClick={handleLocateMe}
-                disabled={isLocating}
-                className={`p-2 rounded-lg border flex items-center justify-center transition-all ${
-                  isDarkMode
-                    ? "bg-blue-500/10 border-blue-500/20 text-blue-400 hover:bg-blue-500/20"
-                    : "bg-blue-50 border-blue-100 text-blue-600 hover:bg-blue-100"
-                } ${isLocating ? "cursor-wait opacity-50" : ""}`}
-                title="Locate Me"
-              >
-                <Navigation size={13} className={isLocating ? "animate-spin" : ""} />
-              </button>
 
               <button
                 onClick={generateRandomLocation}
