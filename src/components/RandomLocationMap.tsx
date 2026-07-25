@@ -5,7 +5,7 @@ import {
   Moon,
   Sun,
   RefreshCw,
-  Navigation,
+  LocateFixed,
   Sliders,
   MapPin,
   Sparkles,
@@ -226,7 +226,7 @@ const RandomLocationMap = () => {
                   } ${isLocating ? "cursor-wait opacity-50" : ""}`}
                   title="Fetch Browser Location"
                 >
-                  <Navigation size={12} className={isLocating ? "animate-spin" : ""} />
+                  <LocateFixed size={12} className={isLocating ? "animate-spin" : ""} />
                   <span>{isLocating ? "Locating..." : "Locate Me"}</span>
                 </button>
               </div>
@@ -439,7 +439,7 @@ const RandomLocationMap = () => {
                   } ${isLocating ? "cursor-wait opacity-50" : ""}`}
                   title="Locate Me"
                 >
-                  <Navigation size={13} className={isLocating ? "animate-spin" : ""} />
+                  <LocateFixed size={13} className={isLocating ? "animate-spin" : ""} />
                 </button>
               </div>
 
