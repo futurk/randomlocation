@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { getRandomLocation } from "./helpers";
+import { getRandomLocation, getDistanceInKm, formatDistance } from "./helpers";
 import Map from "./Map";
 import {
   Moon,
@@ -118,6 +118,17 @@ const RandomLocationMap = () => {
   };
 
   const toggleDarkMode = () => setIsDarkMode(!isDarkMode);
+
+  // Calculate distance between center and output point
+  const distanceFromCenter =
+    userLocation && randomLocation
+      ? getDistanceInKm(
+          userLocation.lat,
+          userLocation.lng,
+          randomLocation.lat,
+          randomLocation.lng
+        )
+      : null;
 
   // Glassmorphic panel classes
   const panelBg = isDarkMode
@@ -284,7 +295,7 @@ const RandomLocationMap = () => {
             {randomLocation && (
               <div className={`mt-5 p-4 rounded-xl border transition-all duration-300 ${cardBg}`}>
                 <span className="text-[10px] font-bold tracking-wider text-red-500 uppercase block mb-1">Generated Location</span>
-                <div className="text-sm font-mono font-bold tracking-tight flex items-center justify-between mb-3">
+                <div className="text-sm font-mono font-bold tracking-tight flex items-center justify-between mb-1">
                   <span>{randomLocation.lat.toFixed(6)}, {randomLocation.lng.toFixed(6)}</span>
                   <button
                     onClick={copyToClipboard}
@@ -294,6 +305,14 @@ const RandomLocationMap = () => {
                     {copied ? <Check size={16} className="text-green-500" /> : <Copy size={16} />}
                   </button>
                 </div>
+
+                {distanceFromCenter !== null && (
+                  <div className="text-xs font-medium text-neutral-500 dark:text-neutral-400 mb-3 flex items-center gap-1">
+                    <span>📏 Distance from center:</span>
+                    <span className="font-bold text-blue-500 font-mono">{formatDistance(distanceFromCenter)}</span>
+                  </div>
+                )}
+
                 <a
                   href={`https://www.google.com/maps?q=${randomLocation.lat},${randomLocation.lng}`}
                   target="_blank"
@@ -314,8 +333,15 @@ const RandomLocationMap = () => {
             {/* Generated display inside the bottom sheet (Single Line) */}
             {randomLocation && (
               <div className={`px-2.5 py-1.5 rounded-lg border flex items-center justify-between text-xs font-mono font-bold ${cardBg}`}>
-                <span className="truncate opacity-90">🎲 {randomLocation.lat.toFixed(5)}, {randomLocation.lng.toFixed(5)}</span>
-                <div className="flex items-center space-x-1.5">
+                <span className="truncate opacity-90 flex items-center gap-1">
+                  <span>🎲 {randomLocation.lat.toFixed(4)}, {randomLocation.lng.toFixed(4)}</span>
+                  {distanceFromCenter !== null && (
+                    <span className="text-[10px] text-blue-500 font-bold bg-blue-500/10 px-1.5 py-0.5 rounded ml-1">
+                      ({formatDistance(distanceFromCenter)})
+                    </span>
+                  )}
+                </span>
+                <div className="flex items-center space-x-1.5 shrink-0 ml-1">
                   <button
                     onClick={copyToClipboard}
                     className="p-1 hover:bg-neutral-200 dark:hover:bg-neutral-800 rounded text-neutral-400 hover:text-white"

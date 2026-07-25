@@ -2,6 +2,7 @@ import React, { useEffect } from "react";
 import { MapContainer, TileLayer, Marker, Popup, Circle, useMap, useMapEvents } from "react-leaflet";
 import L from "leaflet";
 import "leaflet/dist/leaflet.css";
+import { getDistanceInKm, formatDistance } from "./helpers";
 
 interface MapProps {
   centerLat: number | null;
@@ -99,6 +100,11 @@ const Map: React.FC<MapProps> = ({
   const initialLat = centerLat ?? defaultCenterLat;
   const initialLng = centerLng ?? defaultCenterLng;
 
+  const calculatedDistance =
+    centerLat !== null && centerLng !== null && randomLat !== null && randomLng !== null
+      ? getDistanceInKm(centerLat, centerLng, randomLat, randomLng)
+      : null;
+
   return (
     <MapContainer
       center={[initialLat, initialLng]}
@@ -178,6 +184,11 @@ const Map: React.FC<MapProps> = ({
               <span className="text-sm font-semibold">
                 {randomLat.toFixed(6)}, {randomLng.toFixed(6)}
               </span>
+              {calculatedDistance !== null && (
+                <div className="text-[11px] text-neutral-500 dark:text-neutral-400 font-medium my-1">
+                  Distance: <span className="font-bold text-blue-600 dark:text-blue-400">{formatDistance(calculatedDistance)}</span> from center
+                </div>
+              )}
               <div className="mt-2 border-t pt-2 flex flex-col gap-1 text-xs">
                 <a
                   href={`https://www.google.com/maps?q=${randomLat},${randomLng}`}
