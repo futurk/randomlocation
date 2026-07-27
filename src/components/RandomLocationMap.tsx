@@ -24,6 +24,8 @@ import {
   Route as RouteIcon,
   Repeat,
   ArrowRight,
+  Sliders,
+  X,
 } from "lucide-react";
 
 type AppMode = "single" | "route";
@@ -58,6 +60,7 @@ const RandomLocationMap = () => {
   const [isLocating, setIsLocating] = useState<boolean>(false);
   const [copied, setCopied] = useState<boolean>(false);
   const [showOnboardingHelp, setShowOnboardingHelp] = useState<boolean>(true);
+  const [isMobileSettingsOpen, setIsMobileSettingsOpen] = useState<boolean>(false);
 
   // Single Radius Change Handlers
   const handleMinRadiusChange = (val: number) => {
@@ -269,7 +272,7 @@ const RandomLocationMap = () => {
             <div className="space-y-1.5 mb-4">
               <label className="text-xs font-semibold tracking-wider uppercase opacity-80 flex items-center gap-1.5">
                 <MapPin size={14} className="text-blue-500" />
-                Center / Origin
+                Center Location
               </label>
 
               <div className="relative flex items-center">
@@ -586,262 +589,374 @@ const RandomLocationMap = () => {
           </div>
         </div>
 
-        {/* Mobile floating panel bottom sheet */}
-        <div className="absolute bottom-4 left-4 right-4 z-[999] md:hidden">
-          <div className={`rounded-xl border shadow-xl p-3.5 space-y-2.5 transition-all duration-300 ${panelBg}`}>
-            {/* Mode Switcher on Mobile */}
-            <div className="flex items-center p-0.5 rounded-lg bg-neutral-100 dark:bg-neutral-950/60 border border-neutral-200 dark:border-neutral-800 text-[11px] font-bold">
-              <button
-                onClick={() => setAppMode("single")}
-                className={`flex-1 py-1 px-2 rounded transition-all flex items-center justify-center gap-1 ${
-                  appMode === "single"
-                    ? "bg-blue-600 text-white shadow"
-                    : "text-neutral-500 dark:text-neutral-400"
-                }`}
-              >
-                <MapPin size={11} />
-                <span>Location</span>
-              </button>
-              <button
-                onClick={() => setAppMode("route")}
-                className={`flex-1 py-1 px-2 rounded transition-all flex items-center justify-center gap-1 ${
-                  appMode === "route"
-                    ? "bg-blue-600 text-white shadow"
-                    : "text-neutral-500 dark:text-neutral-400"
-                }`}
-              >
-                <RouteIcon size={11} />
-                <span>Route</span>
-              </button>
-            </div>
-
-            {/* Generated SINGLE display on Mobile */}
-            {appMode === "single" && randomLocation && (
-              <div className={`px-2.5 py-1.5 rounded-lg border flex items-center justify-between text-xs font-mono font-bold ${cardBg}`}>
-                <span className="truncate opacity-90 flex items-center gap-1">
-                  <span>🎲 {randomLocation.lat.toFixed(4)}, {randomLocation.lng.toFixed(4)}</span>
-                  {distanceFromCenter !== null && (
-                    <span className="text-[10px] text-blue-500 font-bold bg-blue-500/10 px-1.5 py-0.5 rounded ml-0.5">
-                      ({formatDistance(distanceFromCenter)})
-                    </span>
-                  )}
-                </span>
-                <div className="flex items-center space-x-1 shrink-0 ml-1">
-                  <button
-                    onClick={() => copyToClipboard(`${randomLocation.lat.toFixed(6)}, ${randomLocation.lng.toFixed(6)}`)}
-                    className="p-1 hover:bg-neutral-200 dark:hover:bg-neutral-800 rounded text-neutral-400 hover:text-white"
-                    title="Copy Coordinates"
-                  >
-                    {copied ? <Check size={12} className="text-green-500" /> : <Copy size={12} />}
-                  </button>
-                  <a
-                    href={getGoogleMapsUrl(randomLocation.lat, randomLocation.lng)}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="px-1.5 py-0.5 rounded bg-blue-500/10 text-blue-500 text-[10px] font-bold"
-                    title="Google Maps"
-                  >
-                    Maps
-                  </a>
-                  <a
-                    href={getKomootUrl(randomLocation.lat, randomLocation.lng)}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="px-1.5 py-0.5 rounded bg-emerald-500/10 text-emerald-500 text-[10px] font-bold"
-                    title="Komoot"
-                  >
-                    Komoot
-                  </a>
-                </div>
-              </div>
-            )}
-
-            {/* Generated ROUTE display on Mobile */}
-            {appMode === "route" && routeResult && (
-              <div className={`px-2.5 py-1.5 rounded-lg border flex items-center justify-between text-xs font-mono font-bold ${cardBg}`}>
-                <span className="truncate opacity-90 flex items-center gap-1">
-                  <span>🗺️ {routeResult.waypoints.length} WPs</span>
+        {/* Mobile Floating Dock (Collapsed View) */}
+        <div className="absolute bottom-4 left-4 right-4 z-[999] md:hidden space-y-2">
+          {/* Generated Result Ribbon (Single Line) */}
+          {appMode === "single" && randomLocation && (
+            <div className={`px-3 py-2 rounded-xl border shadow-lg flex items-center justify-between text-xs font-mono font-bold ${cardBg}`}>
+              <span className="truncate opacity-90 flex items-center gap-1">
+                <span>🎲 {randomLocation.lat.toFixed(4)}, {randomLocation.lng.toFixed(4)}</span>
+                {distanceFromCenter !== null && (
                   <span className="text-[10px] text-blue-500 font-bold bg-blue-500/10 px-1.5 py-0.5 rounded ml-0.5">
-                    ({formatDistance(routeResult.totalDistance)})
+                    ({formatDistance(distanceFromCenter)})
                   </span>
-                </span>
-                <div className="flex items-center space-x-1 shrink-0 ml-1">
-                  <a
-                    href={getGoogleMapsRouteUrl(userLocation, routeResult.waypoints, roundTrip)}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="px-1.5 py-0.5 rounded bg-blue-500/10 text-blue-500 text-[10px] font-bold"
-                    title="Google Maps Route"
-                  >
-                    Maps
-                  </a>
-                </div>
-              </div>
-            )}
-
-            {/* Row 1: Coordinates Input with embedded GPS button, and Generate Action */}
-            <div className="flex items-center space-x-2">
-              <div className="relative flex-1 flex items-center">
-                <input
-                  type="text"
-                  value={locationInput}
-                  placeholder="Tap map or type Lat, Lng"
-                  onChange={(e) => handleLocationInputChange(e.target.value)}
-                  className={`w-full pl-3 pr-9 py-2 rounded-lg border text-xs font-mono focus:outline-none ${
-                    isDarkMode
-                      ? "bg-neutral-950/60 border-neutral-800 text-white placeholder-neutral-600"
-                      : "bg-white border-neutral-300 text-neutral-900 placeholder-neutral-400"
-                  }`}
-                />
+                )}
+              </span>
+              <div className="flex items-center space-x-1 shrink-0 ml-1">
                 <button
-                  onClick={handleLocateMe}
-                  disabled={isLocating}
-                  className={`absolute right-1 p-1.5 rounded-md flex items-center justify-center transition-all ${
-                    isDarkMode
-                      ? "text-blue-400 hover:bg-blue-500/20"
-                      : "text-blue-600 hover:bg-blue-100"
-                  } ${isLocating ? "cursor-wait opacity-50" : ""}`}
-                  title="Locate Me"
+                  onClick={() => copyToClipboard(`${randomLocation.lat.toFixed(6)}, ${randomLocation.lng.toFixed(6)}`)}
+                  className="p-1 hover:bg-neutral-200 dark:hover:bg-neutral-800 rounded text-neutral-400 hover:text-white"
+                  title="Copy Coordinates"
                 >
-                  <LocateFixed size={13} className={isLocating ? "animate-spin" : ""} />
+                  {copied ? <Check size={14} className="text-green-500" /> : <Copy size={14} />}
                 </button>
+                <a
+                  href={getGoogleMapsUrl(randomLocation.lat, randomLocation.lng)}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="px-2 py-1 rounded bg-blue-500/10 text-blue-500 text-xs font-bold"
+                  title="Google Maps"
+                >
+                  Maps
+                </a>
+                <a
+                  href={getKomootUrl(randomLocation.lat, randomLocation.lng)}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="px-2 py-1 rounded bg-emerald-500/10 text-emerald-500 text-xs font-bold"
+                  title="Komoot"
+                >
+                  Komoot
+                </a>
               </div>
+            </div>
+          )}
 
-              <button
-                onClick={handleGenerate}
-                disabled={!userLocation}
-                className={`px-3 py-2 rounded-lg font-bold text-xs tracking-wide transition-all flex items-center justify-center gap-1 shadow-md shrink-0 ${
-                  userLocation
-                    ? "bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-500 hover:to-indigo-500 text-white active:scale-[0.95]"
-                    : "bg-neutral-200 dark:bg-neutral-800 text-neutral-400 dark:text-neutral-600 cursor-not-allowed shadow-none"
+          {appMode === "route" && routeResult && (
+            <div className={`px-3 py-2 rounded-xl border shadow-lg flex items-center justify-between text-xs font-mono font-bold ${cardBg}`}>
+              <span className="truncate opacity-90 flex items-center gap-1">
+                <span>🗺️ {routeResult.waypoints.length} Waypoints</span>
+                <span className="text-[10px] text-blue-500 font-bold bg-blue-500/10 px-1.5 py-0.5 rounded ml-0.5">
+                  ({formatDistance(routeResult.totalDistance)})
+                </span>
+              </span>
+              <div className="flex items-center space-x-1 shrink-0 ml-1">
+                <a
+                  href={getGoogleMapsRouteUrl(userLocation, routeResult.waypoints, roundTrip)}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="px-2 py-1 rounded bg-blue-500/10 text-blue-500 text-xs font-bold"
+                  title="Google Maps Route"
+                >
+                  Maps
+                </a>
+              </div>
+            </div>
+          )}
+
+          {/* Main Control Dock */}
+          <div className={`rounded-xl border shadow-xl p-2.5 flex items-center space-x-2 transition-all duration-300 ${panelBg}`}>
+            {/* Filter / Settings Button */}
+            <button
+              onClick={() => setIsMobileSettingsOpen(true)}
+              className={`p-2.5 rounded-lg border flex items-center justify-center shrink-0 transition-all ${
+                isDarkMode
+                  ? "bg-neutral-800 border-neutral-700 text-blue-400 hover:bg-neutral-700"
+                  : "bg-neutral-100 border-neutral-300 text-blue-600 hover:bg-neutral-200"
+              }`}
+              title="Open Configuration"
+            >
+              <Sliders size={16} />
+            </button>
+
+            {/* Center Location Input with embedded GPS button */}
+            <div className="relative flex-1 flex items-center">
+              <input
+                type="text"
+                value={locationInput}
+                placeholder="Tap map or type Lat, Lng"
+                onChange={(e) => handleLocationInputChange(e.target.value)}
+                className={`w-full pl-3 pr-8 py-2 rounded-lg border text-xs font-mono focus:outline-none ${
+                  isDarkMode
+                    ? "bg-neutral-950/60 border-neutral-800 text-white placeholder-neutral-600"
+                    : "bg-white border-neutral-300 text-neutral-900 placeholder-neutral-400"
                 }`}
-                title="Generate"
+              />
+              <button
+                onClick={handleLocateMe}
+                disabled={isLocating}
+                className={`absolute right-1 p-1 rounded-md flex items-center justify-center transition-all ${
+                  isDarkMode
+                    ? "text-blue-400 hover:bg-blue-500/20"
+                    : "text-blue-600 hover:bg-blue-100"
+                } ${isLocating ? "cursor-wait opacity-50" : ""}`}
+                title="Locate Me"
               >
-                <Sparkles size={12} />
-                <span>Generate</span>
+                <LocateFixed size={14} className={isLocating ? "animate-spin" : ""} />
               </button>
             </div>
 
-            {/* Row 2: Mode-Specific Settings */}
-            {appMode === "single" ? (
-              <div className="flex items-center space-x-2 text-xs">
-                <div className="flex-1 flex items-center space-x-1">
-                  <span className="text-[9px] font-bold opacity-75 shrink-0">Min</span>
-                  <input
-                    type="range"
-                    min="0"
-                    max="500"
-                    step="10"
-                    value={minRadius}
-                    onChange={(e) => handleMinRadiusChange(Number(e.target.value))}
-                    className="w-full h-1 bg-neutral-200 dark:bg-neutral-800 rounded-lg appearance-none cursor-pointer accent-amber-500 focus:outline-none"
-                  />
-                  <input
-                    type="number"
-                    min="0"
-                    max="500"
-                    value={minRadius}
-                    onChange={(e) => handleMinRadiusChange(Number(e.target.value))}
-                    className={`w-11 px-1 py-0.5 rounded border text-center font-mono text-[10px] font-bold text-amber-500 shrink-0 focus:outline-none ${
-                      isDarkMode
-                        ? "bg-neutral-950/60 border-neutral-800 text-amber-500"
-                        : "bg-white border-neutral-300 text-amber-600"
-                    }`}
-                  />
-                </div>
-
-                <div className="w-[1px] h-4 bg-neutral-300 dark:bg-neutral-700 shrink-0" />
-
-                <div className="flex-1 flex items-center space-x-1">
-                  <span className="text-[9px] font-bold opacity-75 shrink-0">Max</span>
-                  <input
-                    type="range"
-                    min="0"
-                    max="500"
-                    step="10"
-                    value={maxRadius}
-                    onChange={(e) => handleMaxRadiusChange(Number(e.target.value))}
-                    className="w-full h-1 bg-neutral-200 dark:bg-neutral-800 rounded-lg appearance-none cursor-pointer accent-blue-500 focus:outline-none"
-                  />
-                  <input
-                    type="number"
-                    min="0"
-                    max="500"
-                    value={maxRadius}
-                    onChange={(e) => handleMaxRadiusChange(Number(e.target.value))}
-                    className={`w-11 px-1 py-0.5 rounded border text-center font-mono text-[10px] font-bold text-blue-500 shrink-0 focus:outline-none ${
-                      isDarkMode
-                        ? "bg-neutral-950/60 border-neutral-800 text-blue-400"
-                        : "bg-white border-neutral-300 text-blue-600"
-                    }`}
-                  />
-                </div>
-              </div>
-            ) : (
-              /* Mobile Route Mode Controls: Waypoints, Round-trip, Total Distance */
-              <div className="flex items-center space-x-1.5 text-xs">
-                {/* WPs selector */}
-                <div className="flex items-center rounded-lg bg-neutral-100 dark:bg-neutral-950/60 p-0.5 border border-neutral-200 dark:border-neutral-800 shrink-0">
-                  {[1, 2, 3, 4].map((n) => (
-                    <button
-                      key={`m-wp-${n}`}
-                      onClick={() => setNumWaypoints(n)}
-                      className={`px-1.5 py-0.5 rounded text-[10px] font-bold ${
-                        numWaypoints === n ? "bg-blue-600 text-white" : "text-neutral-400"
-                      }`}
-                    >
-                      {n}
-                    </button>
-                  ))}
-                </div>
-
-                {/* Roundtrip button */}
-                <button
-                  onClick={() => setRoundTrip(!roundTrip)}
-                  className={`p-1 rounded-lg border text-[10px] font-bold flex items-center justify-center shrink-0 ${
-                    roundTrip
-                      ? "bg-indigo-600/20 border-indigo-500/30 text-indigo-400"
-                      : "bg-neutral-100 dark:bg-neutral-950/60 border-neutral-200 dark:border-neutral-800 text-neutral-400"
-                  }`}
-                  title={roundTrip ? "Round Trip" : "One Way"}
-                >
-                  {roundTrip ? <Repeat size={11} /> : <ArrowRight size={11} />}
-                </button>
-
-                <div className="w-[1px] h-3.5 bg-neutral-300 dark:bg-neutral-700 shrink-0" />
-
-                {/* Dist Sliders */}
-                <div className="flex-1 flex items-center space-x-1">
-                  <span className="text-[9px] font-bold opacity-75 shrink-0">Min</span>
-                  <input
-                    type="range"
-                    min="0"
-                    max="500"
-                    step="10"
-                    value={minRouteDist}
-                    onChange={(e) => handleMinRouteDistChange(Number(e.target.value))}
-                    className="w-full h-1 bg-neutral-200 dark:bg-neutral-800 rounded-lg appearance-none cursor-pointer accent-amber-500 focus:outline-none"
-                  />
-                  <span className="font-mono text-[9px] font-bold text-amber-500 shrink-0">{minRouteDist}k</span>
-                </div>
-
-                <div className="flex-1 flex items-center space-x-1">
-                  <span className="text-[9px] font-bold opacity-75 shrink-0">Max</span>
-                  <input
-                    type="range"
-                    min="0"
-                    max="500"
-                    step="10"
-                    value={maxRouteDist}
-                    onChange={(e) => handleMaxRouteDistChange(Number(e.target.value))}
-                    className="w-full h-1 bg-neutral-200 dark:bg-neutral-800 rounded-lg appearance-none cursor-pointer accent-blue-500 focus:outline-none"
-                  />
-                  <span className="font-mono text-[9px] font-bold text-blue-500 shrink-0">{maxRouteDist}k</span>
-                </div>
-              </div>
-            )}
+            {/* Generate Action Button */}
+            <button
+              onClick={handleGenerate}
+              disabled={!userLocation}
+              className={`px-3.5 py-2 rounded-lg font-bold text-xs tracking-wide transition-all flex items-center justify-center gap-1 shadow-md shrink-0 ${
+                userLocation
+                  ? "bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-500 hover:to-indigo-500 text-white active:scale-[0.95]"
+                  : "bg-neutral-200 dark:bg-neutral-800 text-neutral-400 dark:text-neutral-600 cursor-not-allowed shadow-none"
+              }`}
+              title="Generate"
+            >
+              <Sparkles size={13} />
+              <span>Generate</span>
+            </button>
           </div>
         </div>
+
+        {/* Mobile Expanded Drawer Modal / Bottom Sheet */}
+        {isMobileSettingsOpen && (
+          <div className="fixed inset-0 z-[1000] md:hidden flex flex-col justify-end bg-black/40 backdrop-blur-sm">
+            {/* Backdrop click to close */}
+            <div className="flex-1" onClick={() => setIsMobileSettingsOpen(false)} />
+
+            {/* Drawer Card */}
+            <div className={`rounded-t-2xl border-t shadow-2xl p-5 space-y-4 max-h-[85vh] overflow-y-auto transition-all ${panelBg}`}>
+              {/* Header */}
+              <div className="flex items-center justify-between border-b pb-3 border-neutral-200 dark:border-neutral-800">
+                <h3 className="text-sm font-bold flex items-center gap-2">
+                  <Sliders size={16} className="text-blue-500" />
+                  <span>Search Configuration</span>
+                </h3>
+                <button
+                  onClick={() => setIsMobileSettingsOpen(false)}
+                  className="p-1.5 rounded-lg hover:bg-neutral-200 dark:hover:bg-neutral-800 text-neutral-400 hover:text-neutral-900 dark:hover:text-white"
+                >
+                  <X size={18} />
+                </button>
+              </div>
+
+              {/* Mode Switcher */}
+              <div className="space-y-1.5">
+                <label className="text-xs font-semibold uppercase opacity-75">Generator Mode</label>
+                <div className="flex items-center p-1 rounded-xl bg-neutral-100 dark:bg-neutral-950/60 border border-neutral-200 dark:border-neutral-800 text-xs font-bold">
+                  <button
+                    onClick={() => setAppMode("single")}
+                    className={`flex-1 py-2 px-3 rounded-lg transition-all flex items-center justify-center gap-1.5 ${
+                      appMode === "single"
+                        ? "bg-blue-600 text-white shadow"
+                        : "text-neutral-500 dark:text-neutral-400"
+                    }`}
+                  >
+                    <MapPin size={14} />
+                    <span>Single Location</span>
+                  </button>
+                  <button
+                    onClick={() => setAppMode("route")}
+                    className={`flex-1 py-2 px-3 rounded-lg transition-all flex items-center justify-center gap-1.5 ${
+                      appMode === "route"
+                        ? "bg-blue-600 text-white shadow"
+                        : "text-neutral-500 dark:text-neutral-400"
+                    }`}
+                  >
+                    <RouteIcon size={14} />
+                    <span>Route Planner</span>
+                  </button>
+                </div>
+              </div>
+
+              {/* Mode 1: Single Radius Controls */}
+              {appMode === "single" && (
+                <div className="space-y-4 pt-1">
+                  <div className="flex justify-between items-center text-xs font-semibold">
+                    <span className="opacity-80">SEARCH BOUNDARIES</span>
+                    <span className="text-blue-500 font-bold bg-blue-500/10 px-2 py-0.5 rounded-md font-mono">
+                      {minRadius} km — {maxRadius} km
+                    </span>
+                  </div>
+
+                  <div className="grid grid-cols-2 gap-4">
+                    {/* Min Radius */}
+                    <div className="space-y-1.5">
+                      <div className="flex justify-between items-center text-xs font-semibold">
+                        <span>Min Radius</span>
+                        <div className="flex items-center space-x-1">
+                          <input
+                            type="number"
+                            min="0"
+                            max="500"
+                            value={minRadius}
+                            onChange={(e) => handleMinRadiusChange(Number(e.target.value))}
+                            className={`w-14 px-1.5 py-1 rounded border text-right font-mono font-bold text-amber-500 text-xs focus:outline-none ${
+                              isDarkMode ? "bg-neutral-950/60 border-neutral-800 text-amber-500" : "bg-white border-neutral-300 text-amber-600"
+                            }`}
+                          />
+                          <span className="text-xs font-bold text-amber-500">km</span>
+                        </div>
+                      </div>
+                      <input
+                        type="range"
+                        min="0"
+                        max="500"
+                        step="10"
+                        value={minRadius}
+                        onChange={(e) => handleMinRadiusChange(Number(e.target.value))}
+                        className="w-full h-2 bg-neutral-200 dark:bg-neutral-800 rounded-lg appearance-none cursor-pointer accent-amber-500"
+                      />
+                    </div>
+
+                    {/* Max Radius */}
+                    <div className="space-y-1.5">
+                      <div className="flex justify-between items-center text-xs font-semibold">
+                        <span>Max Radius</span>
+                        <div className="flex items-center space-x-1">
+                          <input
+                            type="number"
+                            min="0"
+                            max="500"
+                            value={maxRadius}
+                            onChange={(e) => handleMaxRadiusChange(Number(e.target.value))}
+                            className={`w-14 px-1.5 py-1 rounded border text-right font-mono font-bold text-blue-500 text-xs focus:outline-none ${
+                              isDarkMode ? "bg-neutral-950/60 border-neutral-800 text-blue-400" : "bg-white border-neutral-300 text-blue-600"
+                            }`}
+                          />
+                          <span className="text-xs font-bold text-blue-500">km</span>
+                        </div>
+                      </div>
+                      <input
+                        type="range"
+                        min="0"
+                        max="500"
+                        step="10"
+                        value={maxRadius}
+                        onChange={(e) => handleMaxRadiusChange(Number(e.target.value))}
+                        className="w-full h-2 bg-neutral-200 dark:bg-neutral-800 rounded-lg appearance-none cursor-pointer accent-blue-500"
+                      />
+                    </div>
+                  </div>
+                </div>
+              )}
+
+              {/* Mode 2: Route Planner Controls */}
+              {appMode === "route" && (
+                <div className="space-y-4 pt-1">
+                  <div className="grid grid-cols-2 gap-3">
+                    {/* Waypoints Selector */}
+                    <div className="space-y-1.5">
+                      <label className="text-xs font-semibold opacity-80 block">Waypoints</label>
+                      <div className="flex items-center p-1 rounded-xl bg-neutral-100 dark:bg-neutral-950/60 border border-neutral-200 dark:border-neutral-800">
+                        {[1, 2, 3, 4].map((n) => (
+                          <button
+                            key={`m-exp-wp-${n}`}
+                            onClick={() => setNumWaypoints(n)}
+                            className={`flex-1 py-1.5 rounded-lg text-xs font-bold transition-all ${
+                              numWaypoints === n ? "bg-blue-600 text-white shadow" : "text-neutral-500"
+                            }`}
+                          >
+                            {n}
+                          </button>
+                        ))}
+                      </div>
+                    </div>
+
+                    {/* Roundtrip Button */}
+                    <div className="space-y-1.5">
+                      <label className="text-xs font-semibold opacity-80 block">Route Type</label>
+                      <button
+                        onClick={() => setRoundTrip(!roundTrip)}
+                        className={`w-full py-2 px-3 rounded-xl border text-xs font-bold flex items-center justify-center gap-1.5 transition-all ${
+                          roundTrip
+                            ? "bg-indigo-600/15 border-indigo-500/30 text-indigo-400"
+                            : "bg-neutral-100 dark:bg-neutral-950/60 border-neutral-200 dark:border-neutral-800 text-neutral-500"
+                        }`}
+                      >
+                        {roundTrip ? <Repeat size={14} /> : <ArrowRight size={14} />}
+                        <span>{roundTrip ? "Round Trip" : "One Way"}</span>
+                      </button>
+                    </div>
+                  </div>
+
+                  {/* Total Distance Sliders */}
+                  <div className="space-y-2">
+                    <div className="flex justify-between items-center text-xs font-semibold">
+                      <span className="opacity-80">TOTAL ROUTE DISTANCE</span>
+                      <span className="text-blue-500 font-bold bg-blue-500/10 px-2 py-0.5 rounded-md font-mono">
+                        {minRouteDist} km — {maxRouteDist} km
+                      </span>
+                    </div>
+
+                    <div className="grid grid-cols-2 gap-4 pt-1">
+                      {/* Min Route Distance */}
+                      <div className="space-y-1.5">
+                        <div className="flex justify-between items-center text-xs font-semibold">
+                          <span>Min Total</span>
+                          <div className="flex items-center space-x-1">
+                            <input
+                              type="number"
+                              min="0"
+                              max="500"
+                              value={minRouteDist}
+                              onChange={(e) => handleMinRouteDistChange(Number(e.target.value))}
+                              className={`w-14 px-1.5 py-1 rounded border text-right font-mono font-bold text-amber-500 text-xs focus:outline-none ${
+                                isDarkMode ? "bg-neutral-950/60 border-neutral-800 text-amber-500" : "bg-white border-neutral-300 text-amber-600"
+                              }`}
+                            />
+                            <span className="text-xs font-bold text-amber-500">km</span>
+                          </div>
+                        </div>
+                        <input
+                          type="range"
+                          min="0"
+                          max="500"
+                          step="10"
+                          value={minRouteDist}
+                          onChange={(e) => handleMinRouteDistChange(Number(e.target.value))}
+                          className="w-full h-2 bg-neutral-200 dark:bg-neutral-800 rounded-lg appearance-none cursor-pointer accent-amber-500"
+                        />
+                      </div>
+
+                      {/* Max Route Distance */}
+                      <div className="space-y-1.5">
+                        <div className="flex justify-between items-center text-xs font-semibold">
+                          <span>Max Total</span>
+                          <div className="flex items-center space-x-1">
+                            <input
+                              type="number"
+                              min="0"
+                              max="500"
+                              value={maxRouteDist}
+                              onChange={(e) => handleMaxRouteDistChange(Number(e.target.value))}
+                              className={`w-14 px-1.5 py-1 rounded border text-right font-mono font-bold text-blue-500 text-xs focus:outline-none ${
+                                isDarkMode ? "bg-neutral-950/60 border-neutral-800 text-blue-400" : "bg-white border-neutral-300 text-blue-600"
+                              }`}
+                            />
+                            <span className="text-xs font-bold text-blue-500">km</span>
+                          </div>
+                        </div>
+                        <input
+                          type="range"
+                          min="0"
+                          max="500"
+                          step="10"
+                          value={maxRouteDist}
+                          onChange={(e) => handleMaxRouteDistChange(Number(e.target.value))}
+                          className="w-full h-2 bg-neutral-200 dark:bg-neutral-800 rounded-lg appearance-none cursor-pointer accent-blue-500"
+                        />
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              )}
+
+              {/* Done Button */}
+              <button
+                onClick={() => setIsMobileSettingsOpen(false)}
+                className="w-full mt-2 py-3 rounded-xl bg-blue-600 text-white font-bold text-xs tracking-wide shadow-lg active:scale-[0.98] transition-all"
+              >
+                Apply & Done
+              </button>
+            </div>
+          </div>
+        )}
 
         {/* Floating instruction banners */}
         {showOnboardingHelp && (
