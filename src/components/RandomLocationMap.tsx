@@ -7,7 +7,6 @@ import {
   getGoogleMapsUrl,
   getGoogleMapsRouteUrl,
   getKomootUrl,
-  getKomootRouteUrl,
   LatLng,
 } from "./helpers";
 import Map from "./Map";
@@ -581,15 +580,6 @@ const RandomLocationMap = () => {
                     <ExternalLink size={14} />
                     Open Route in Google Maps
                   </a>
-                  <a
-                    href={getKomootRouteUrl(userLocation, routeResult.waypoints)}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="inline-flex items-center justify-center gap-1.5 px-3 py-2 rounded-lg bg-emerald-500/10 hover:bg-emerald-500/20 text-emerald-500 text-xs font-bold transition-all border border-emerald-500/20"
-                  >
-                    <ExternalLink size={14} />
-                    Open Route in Komoot
-                  </a>
                 </div>
               </div>
             )}
@@ -684,15 +674,6 @@ const RandomLocationMap = () => {
                     title="Google Maps Route"
                   >
                     Maps
-                  </a>
-                  <a
-                    href={getKomootRouteUrl(userLocation, routeResult.waypoints)}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="px-1.5 py-0.5 rounded bg-emerald-500/10 text-emerald-500 text-[10px] font-bold"
-                    title="Komoot Route"
-                  >
-                    Komoot
                   </a>
                 </div>
               </div>

@@ -220,13 +220,3 @@ export const getKomootUrl = (
 ): string => {
   return `https://www.komoot.com/plan/@${destLat.toFixed(6)},${destLng.toFixed(6)},14z?sport=touringbicycle`;
 };
-
-// Generate multi-waypoint Komoot Tour Planner URL
-export const getKomootRouteUrl = (
-  _origin: LatLng | null,
-  waypoints: LatLng[]
-): string => {
-  if (waypoints.length === 0) return "#";
-  const target = waypoints[0];
-  return `https://www.komoot.com/plan/@${target.lat.toFixed(6)},${target.lng.toFixed(6)},13z?sport=touringbicycle`;
-};
