@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { MapContainer, TileLayer, Marker, Popup, Circle, Polyline, useMap, useMapEvents } from "react-leaflet";
 import L from "leaflet";
 import "leaflet/dist/leaflet.css";
@@ -20,6 +20,37 @@ interface MapProps {
   isDarkMode: boolean;
   onMapClick: (lat: number, lng: number) => void;
 }
+
+// Inline Copy Button for Leaflet Popups
+const PopupCopyButton: React.FC<{ lat: number; lng: number }> = ({ lat, lng }) => {
+  const [copied, setCopied] = useState(false);
+
+  const handleCopy = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    navigator.clipboard.writeText(`${lat.toFixed(6)}, ${lng.toFixed(6)}`);
+    setCopied(true);
+    setTimeout(() => setCopied(false), 2000);
+  };
+
+  return (
+    <button
+      onClick={handleCopy}
+      className="p-1 hover:bg-neutral-200 dark:hover:bg-neutral-700/60 rounded transition-colors text-neutral-400 hover:text-neutral-700 dark:hover:text-white shrink-0 ml-1 inline-flex items-center justify-center cursor-pointer"
+      title="Copy Coordinates"
+    >
+      {copied ? (
+        <svg className="w-3.5 h-3.5 text-green-500" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
+          <polyline points="20 6 9 17 4 12" />
+        </svg>
+      ) : (
+        <svg className="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+          <rect x="9" y="9" width="13" height="13" rx="2" ry="2" />
+          <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1" />
+        </svg>
+      )}
+    </button>
+  );
+};
 
 // Custom DivIcon for Center point (Blue pulsing beacon)
 const centerIcon = L.divIcon({
@@ -171,9 +202,10 @@ const Map: React.FC<MapProps> = ({
               <span className="font-semibold text-blue-600 block text-xs uppercase tracking-wide">
                 {mode === "route" ? "Route Origin / Start" : "Search Center"}
               </span>
-              <span className="text-sm font-medium">
-                {centerLat.toFixed(6)}, {centerLng.toFixed(6)}
-              </span>
+              <div className="flex items-center justify-center gap-0.5 text-sm font-medium">
+                <span>{centerLat.toFixed(6)}, {centerLng.toFixed(6)}</span>
+                <PopupCopyButton lat={centerLat} lng={centerLng} />
+              </div>
             </div>
           </Popup>
         </Marker>
@@ -215,9 +247,10 @@ const Map: React.FC<MapProps> = ({
           <Popup>
             <div className="text-center font-sans p-1">
               <span className="font-bold text-red-500 block text-xs uppercase tracking-wide mb-1">Random Location</span>
-              <span className="text-sm font-semibold">
-                {randomLat.toFixed(6)}, {randomLng.toFixed(6)}
-              </span>
+              <div className="flex items-center justify-center gap-0.5 text-sm font-semibold">
+                <span>{randomLat.toFixed(6)}, {randomLng.toFixed(6)}</span>
+                <PopupCopyButton lat={randomLat} lng={randomLng} />
+              </div>
               {calculatedDistance !== null && (
                 <div className="text-[11px] text-neutral-500 dark:text-neutral-400 font-medium my-1">
                   Distance: <span className="font-bold text-blue-600 dark:text-blue-400">{formatDistance(calculatedDistance)}</span>
@@ -272,9 +305,10 @@ const Map: React.FC<MapProps> = ({
                 <span className="font-bold text-indigo-600 block text-xs uppercase tracking-wide mb-1">
                   Waypoint {idx + 1}
                 </span>
-                <span className="text-xs font-mono font-semibold">
-                  {wp.lat.toFixed(6)}, {wp.lng.toFixed(6)}
-                </span>
+                <div className="flex items-center justify-center gap-0.5 text-xs font-mono font-semibold">
+                  <span>{wp.lat.toFixed(6)}, {wp.lng.toFixed(6)}</span>
+                  <PopupCopyButton lat={wp.lat} lng={wp.lng} />
+                </div>
               </div>
             </Popup>
           </Marker>
