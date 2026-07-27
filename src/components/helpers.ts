@@ -126,28 +126,21 @@ export const generateRandomRoute = (
       });
     }
   } else {
-    // For a one-way trip: Center -> W1 -> W2 ... -> W_N (N segments in an open polyline with enforced bends)
-    let currentAngle = Math.random() * 2 * Math.PI;
+    // For a one-way trip: Center -> W1 -> W2 ... -> W_N (Max-Entropy open polyline)
+    let currentAngle = Math.random() * 2 * Math.PI; // Random initial heading in 360°
     const rawOffsets: { dx: number; dy: number }[] = [];
-
-    // Track turn direction (+1 for left, -1 for right)
-    let turnSign = Math.random() < 0.5 ? 1 : -1;
 
     for (let i = 0; i < numWaypoints; i++) {
       if (i > 0) {
-        // Enforce a distinct bend turn between 45 deg (PI/4) and 115 deg (115*PI/180)
-        const turnAngle = (45 + Math.random() * 70) * (Math.PI / 180);
-        // 40% chance to flip turn direction (creating zig-zags vs smooth curves)
-        if (Math.random() < 0.4) {
-          turnSign *= -1;
-        }
-        currentAngle += turnSign * turnAngle;
+        // Wide turn angle sampled randomly anywhere in [-140°, +140°] (280° total arc freedom)
+        const turnAngle = (Math.random() - 0.5) * (Math.PI * 1.55);
+        currentAngle += turnAngle;
       }
-
-      const segLength = 0.8 + Math.random() * 0.4;
+      // Dynamic segment length ratio sampled randomly from [0.25, 1.75] for maximum structural variety
+      const segWeight = 0.25 + Math.random() * 1.5;
       rawOffsets.push({
-        dx: segLength * Math.cos(currentAngle),
-        dy: segLength * Math.sin(currentAngle),
+        dx: segWeight * Math.cos(currentAngle),
+        dy: segWeight * Math.sin(currentAngle),
       });
     }
 
