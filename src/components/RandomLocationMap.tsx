@@ -27,6 +27,7 @@ import {
   ArrowRight,
   Sliders,
   X,
+  Github,
 } from "lucide-react";
 
 type AppMode = "single" | "route";
@@ -205,7 +206,21 @@ const RandomLocationMap = () => {
           </div>
         </div>
 
-        <div className="flex items-center space-x-4">
+        <div className="flex items-center space-x-3">
+          <a
+            href="https://github.com/futurk/randomlocation"
+            target="_blank"
+            rel="noopener noreferrer"
+            className={`p-2.5 rounded-xl border transition-all duration-300 flex items-center justify-center ${
+              isDarkMode
+                ? "bg-neutral-900 border-neutral-800 text-neutral-300 hover:text-white hover:bg-neutral-800"
+                : "bg-white border-neutral-200 text-neutral-600 hover:text-neutral-900 hover:bg-neutral-50"
+            }`}
+            title="GitHub Repository"
+          >
+            <Github size={18} />
+          </a>
+
           <button
             onClick={toggleDarkMode}
             className={`p-2.5 rounded-xl border transition-all duration-300 ${
