@@ -1,16 +1,22 @@
 import React, { useEffect } from "react";
-import { MapContainer, TileLayer, Marker, Popup, Circle, useMap, useMapEvents } from "react-leaflet";
+import { MapContainer, TileLayer, Marker, Popup, Circle, Polyline, useMap, useMapEvents } from "react-leaflet";
 import L from "leaflet";
 import "leaflet/dist/leaflet.css";
-import { getDistanceInKm, formatDistance, getGoogleMapsUrl, getKomootUrl } from "./helpers";
+import { getDistanceInKm, formatDistance, getGoogleMapsUrl, getKomootUrl, LatLng } from "./helpers";
 
 interface MapProps {
   centerLat: number | null;
   centerLng: number | null;
-  randomLat: number | null;
-  randomLng: number | null;
-  minRadius: number; // in km
-  maxRadius: number; // in km
+  mode?: "single" | "route";
+  // Single location mode props
+  randomLat?: number | null;
+  randomLng?: number | null;
+  minRadius?: number; // in km
+  maxRadius?: number; // in km
+  // Route mode props
+  routeWaypoints?: LatLng[];
+  roundTrip?: boolean;
+  // Shared
   isDarkMode: boolean;
   onMapClick: (lat: number, lng: number) => void;
 }
@@ -28,7 +34,7 @@ const centerIcon = L.divIcon({
   iconAnchor: [16, 16],
 });
 
-// Custom DivIcon for Random point (Red map pin)
+// Custom DivIcon for Single Random point (Red map pin)
 const randomIcon = L.divIcon({
   html: `
     <div class="relative flex items-center justify-center w-10 h-10">
@@ -42,31 +48,52 @@ const randomIcon = L.divIcon({
   iconAnchor: [20, 36],
 });
 
+// Custom DivIcon for Route Waypoints (Numbered badges)
+const createWaypointIcon = (index: number) =>
+  L.divIcon({
+    html: `
+      <div class="relative flex items-center justify-center w-7 h-7 rounded-full bg-indigo-600 text-white font-bold text-xs shadow-lg border-2 border-white transform transition-transform hover:scale-110">
+        ${index + 1}
+      </div>
+    `,
+    className: "custom-waypoint-icon",
+    iconSize: [28, 28],
+    iconAnchor: [14, 14],
+  });
+
 // Component to handle map center changes and fitting bounds smoothly
 const MapController: React.FC<{
   centerLat: number | null;
   centerLng: number | null;
-  randomLat: number | null;
-  randomLng: number | null;
-}> = ({ centerLat, centerLng, randomLat, randomLng }) => {
+  randomLat?: number | null;
+  randomLng?: number | null;
+  routeWaypoints?: LatLng[];
+  mode: "single" | "route";
+}> = ({ centerLat, centerLng, randomLat, randomLng, routeWaypoints, mode }) => {
   const map = useMap();
 
   useEffect(() => {
     if (centerLat !== null && centerLng !== null) {
-      if (randomLat !== null && randomLng !== null) {
-        // Compute bounds to include both Center and Random pins
+      if (mode === "single" && typeof randomLat === "number" && typeof randomLng === "number") {
         const bounds = L.latLngBounds(
           [centerLat, centerLng],
           [randomLat, randomLng]
         );
         const currentZoom = map.getZoom();
         map.fitBounds(bounds, { padding: [60, 60], maxZoom: currentZoom, animate: true });
+      } else if (mode === "route" && routeWaypoints && routeWaypoints.length > 0) {
+        const points: [number, number][] = [
+          [centerLat, centerLng],
+          ...routeWaypoints.map((w) => [w.lat, w.lng] as [number, number]),
+        ];
+        const bounds = L.latLngBounds(points);
+        const currentZoom = map.getZoom();
+        map.fitBounds(bounds, { padding: [60, 60], maxZoom: currentZoom, animate: true });
       } else {
-        // Smoothly pan to the new center at default zoom 12
         map.setView([centerLat, centerLng], 12, { animate: true });
       }
     }
-  }, [centerLat, centerLng, randomLat, randomLng, map]);
+  }, [centerLat, centerLng, randomLat, randomLng, routeWaypoints, mode, map]);
 
   return null;
 };
@@ -86,10 +113,13 @@ const MapEvents: React.FC<{
 const Map: React.FC<MapProps> = ({
   centerLat,
   centerLng,
-  randomLat,
-  randomLng,
-  minRadius,
-  maxRadius,
+  mode = "single",
+  randomLat = null,
+  randomLng = null,
+  minRadius = 0,
+  maxRadius = 20,
+  routeWaypoints = [],
+  roundTrip = false,
   isDarkMode,
   onMapClick,
 }) => {
@@ -101,7 +131,7 @@ const Map: React.FC<MapProps> = ({
   const initialLng = centerLng ?? defaultCenterLng;
 
   const calculatedDistance =
-    centerLat !== null && centerLng !== null && randomLat !== null && randomLng !== null
+    typeof centerLat === "number" && typeof centerLng === "number" && typeof randomLat === "number" && typeof randomLng === "number"
       ? getDistanceInKm(centerLat, centerLng, randomLat, randomLng)
       : null;
 
@@ -127,6 +157,8 @@ const Map: React.FC<MapProps> = ({
         centerLng={centerLng}
         randomLat={randomLat}
         randomLng={randomLng}
+        routeWaypoints={routeWaypoints}
+        mode={mode}
       />
 
       <MapEvents onMapClick={onMapClick} />
@@ -136,7 +168,9 @@ const Map: React.FC<MapProps> = ({
         <Marker position={[centerLat, centerLng]} icon={centerIcon}>
           <Popup>
             <div className="text-center font-sans">
-              <span className="font-semibold text-blue-600 block text-xs uppercase tracking-wide">Search Center</span>
+              <span className="font-semibold text-blue-600 block text-xs uppercase tracking-wide">
+                {mode === "route" ? "Route Origin / Start" : "Search Center"}
+              </span>
               <span className="text-sm font-medium">
                 {centerLat.toFixed(6)}, {centerLng.toFixed(6)}
               </span>
@@ -145,8 +179,8 @@ const Map: React.FC<MapProps> = ({
         </Marker>
       )}
 
-      {/* Outer Geofence Circle (Max Radius) */}
-      {centerLat !== null && centerLng !== null && maxRadius > 0 && (
+      {/* SINGLE MODE: Outer Geofence Circle (Max Radius) */}
+      {mode === "single" && centerLat !== null && centerLng !== null && maxRadius > 0 && (
         <Circle
           center={[centerLat, centerLng]}
           radius={maxRadius * 1000} // radius in meters
@@ -160,8 +194,8 @@ const Map: React.FC<MapProps> = ({
         />
       )}
 
-      {/* Inner Exclusion Circle (Min Radius) */}
-      {centerLat !== null && centerLng !== null && minRadius > 0 && minRadius < maxRadius && (
+      {/* SINGLE MODE: Inner Exclusion Circle (Min Radius) */}
+      {mode === "single" && centerLat !== null && centerLng !== null && minRadius > 0 && minRadius < maxRadius && (
         <Circle
           center={[centerLat, centerLng]}
           radius={minRadius * 1000} // radius in meters
@@ -175,8 +209,8 @@ const Map: React.FC<MapProps> = ({
         />
       )}
 
-      {/* Generated Random point Marker */}
-      {randomLat !== null && randomLng !== null && (
+      {/* SINGLE MODE: Generated Random point Marker */}
+      {mode === "single" && typeof randomLat === "number" && typeof randomLng === "number" && (
         <Marker position={[randomLat, randomLng]} icon={randomIcon}>
           <Popup>
             <div className="text-center font-sans p-1">
@@ -211,6 +245,40 @@ const Map: React.FC<MapProps> = ({
           </Popup>
         </Marker>
       )}
+
+      {/* ROUTE MODE: Route Polyline Path */}
+      {mode === "route" && centerLat !== null && centerLng !== null && routeWaypoints.length > 0 && (
+        <Polyline
+          positions={[
+            [centerLat, centerLng],
+            ...routeWaypoints.map((w) => [w.lat, w.lng] as [number, number]),
+            ...(roundTrip ? [[centerLat, centerLng] as [number, number]] : []),
+          ]}
+          pathOptions={{
+            color: isDarkMode ? "#60A5FA" : "#2563EB",
+            weight: 3,
+            dashArray: "6, 6",
+            opacity: 0.85,
+          }}
+        />
+      )}
+
+      {/* ROUTE MODE: Waypoint Markers */}
+      {mode === "route" &&
+        routeWaypoints.map((wp, idx) => (
+          <Marker key={`wp-${idx}`} position={[wp.lat, wp.lng]} icon={createWaypointIcon(idx)}>
+            <Popup>
+              <div className="text-center font-sans p-1">
+                <span className="font-bold text-indigo-600 block text-xs uppercase tracking-wide mb-1">
+                  Waypoint {idx + 1}
+                </span>
+                <span className="text-xs font-mono font-semibold">
+                  {wp.lat.toFixed(6)}, {wp.lng.toFixed(6)}
+                </span>
+              </div>
+            </Popup>
+          </Marker>
+        ))}
     </MapContainer>
   );
 };
