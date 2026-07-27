@@ -126,12 +126,24 @@ export const generateRandomRoute = (
       });
     }
   } else {
-    // For a one-way trip: Center -> W1 -> W2 ... -> W_N (N segments in an open polyline)
+    // For a one-way trip: Center -> W1 -> W2 ... -> W_N (N segments in an open polyline with enforced bends)
     let currentAngle = Math.random() * 2 * Math.PI;
     const rawOffsets: { dx: number; dy: number }[] = [];
 
+    // Track turn direction (+1 for left, -1 for right)
+    let turnSign = Math.random() < 0.5 ? 1 : -1;
+
     for (let i = 0; i < numWaypoints; i++) {
-      currentAngle += (Math.random() - 0.5) * (Math.PI / 2);
+      if (i > 0) {
+        // Enforce a distinct bend turn between 45 deg (PI/4) and 115 deg (115*PI/180)
+        const turnAngle = (45 + Math.random() * 70) * (Math.PI / 180);
+        // 40% chance to flip turn direction (creating zig-zags vs smooth curves)
+        if (Math.random() < 0.4) {
+          turnSign *= -1;
+        }
+        currentAngle += turnSign * turnAngle;
+      }
+
       const segLength = 0.8 + Math.random() * 0.4;
       rawOffsets.push({
         dx: segLength * Math.cos(currentAngle),
