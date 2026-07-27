@@ -1,10 +1,10 @@
-# GeoRandom Adventure Generator
+# GeoRandom Adventure & Route Generator
 
 ## Introduction
 
-**GeoRandom** (formerly *Random Location*) is a modern, responsive web application designed to help you discover random geographic locations within a specified radius from any custom center point. 
+**GeoRandom** (formerly *Random Location*) is a modern, responsive web application designed to help you discover random geographic destinations and generate multi-waypoint adventure routes from any custom origin.
 
-The application has been completely redesigned with a premium **glassmorphic floating dashboard** layout, on-demand geolocation, interactive map clicks, and real-time geofence boundaries.
+The application features a premium **glassmorphic dashboard**, expandable mobile bottom drawers, on-demand geolocation, interactive map clicks, dual geofence boundaries, and direct integrations with **Google Maps** and **Komoot Tour Planner**.
 
 Visit the live application at [https://futurk.github.io/randomlocation/](https://futurk.github.io/randomlocation/) to see it in action.
 
@@ -19,7 +19,7 @@ Visit the live application at [https://futurk.github.io/randomlocation/](https:/
 
 ## ⚡ Tech Stack
 
-- **Vite:** Next-generation frontend tooling providing blazing-fast HMR and building.
+- **Vite:** Next-generation frontend tooling providing blazing-fast HMR and bundling.
 - **React (v18):** For building the component-based, stateful user interface.
 - **TypeScript:** For absolute type safety and a robust development experience.
 - **Tailwind CSS:** For clean, modern glassmorphic layouts and responsive design.
@@ -31,18 +31,33 @@ Visit the live application at [https://futurk.github.io/randomlocation/](https:/
 
 ---
 
-## 🌟 Premium Features
+## 🌟 Core Modes & Features
 
-- **📍 Tap-to-Center Map Interaction**: Set your target search area instantly by clicking or tapping anywhere on the map—no manual typing required.
-- **🛰️ On-Demand Geolocation**: Respects your privacy. Your browser location is only fetched when you explicitly click the **"Locate Me"** button.
-- **⭕ Dynamic Search Boundary (Geofence)**: Visually renders a semi-transparent, styled radius boundary on the map, illustrating the exact search zone.
-- **🎲 Manual/Explicit Generation**: Random locations are only calculated when you explicitly hit the **"Generate Random Location"** button.
-- **📲 Mobile Installable (PWA)**: Install GeoRandom directly to your home screen on iOS and Android to launch it as a full-screen, native-like app.
-- **🎛️ Dual-Device Layouts**:
-  - **Desktop**: A sleek, translucent glassmorphic control card floating on top of the map.
-  - **Mobile**: A highly compact, bottom-floating 2-row panel optimized for Bromite/Chromium toolbar safety.
-- **📋 Copy & External Navigation**: Copy your generated coordinates instantly to your clipboard with custom confirmation feedback, or click to open them directly in **Google Maps**.
-- **☀️ Light & Dark Themes**: Fully integrated system supporting dark mode and light mode color spaces, initializing dynamically from your **system preference**.
+### 📍 Mode 1: Single Location Generator
+- **Dual Annulus Boundaries**: Specify both **Min Radius** (Amber inner ring) and **Max Radius** (Blue outer ring) from $0\text{km}$ up to $500\text{km}$.
+- **Uniform Sampling**: Calculates points uniformly distributed by area within the ring between your minimum and maximum distance constraints.
+
+### 🗺️ Mode 2: Random Route Planner
+- **Multi-Waypoint Paths**: Select between **1, 2, 3, or 4 waypoints**.
+- **Max-Entropy Geometry**: Generates natural, organic shapes (curves, zig-zags, L-shapes) with wide $280^\circ$ turn freedom and variable segment ratios.
+- **Round-Trip vs. One-Way**:
+  - **Round Trip (Loop)**: Constructs a closed circuit starting at Center, looping through Waypoints $1 \dots N$, and returning back to Center.
+  - **One Way**: Constructs an open polyline ending at Waypoint $N$.
+- **Total Route Distance**: Sets minimum and maximum limits ($0\text{km} - 500\text{km}$) for the **TOTAL approximate route length**.
+
+---
+
+## 🎛️ User Experience Highlights
+
+- **🎚️ Dual-Thumb Range Sliders**: Adjust Min and Max distance boundaries on a single unified slider track with 10 km step increments and direct editable typing boxes.
+- **📍 Tap-to-Center Map Interaction**: Set your target origin instantly by clicking or tapping anywhere on the map—or typing exact coordinates.
+- **🛰️ Embedded GPS Target Button**: Native map `LocateFixed` target icon embedded directly inside the coordinate text field for high-accuracy browser location fetching.
+- **📱 Expandable Mobile Drawer**: An ultra-clean, collapsed mobile dock keeps 95% of the viewport focused on the map, with an expandable bottom sheet drawer for full configuration.
+- **📏 Distance Calculation Engine**: Computes exact Haversine air distances for single points and total route paths, formatted nicely in meters or kilometers.
+- **📋 Copy Coordinates**: Copy coordinates to clipboard instantly with visual feedback in dashboard result views and directly inside map marker popup dialogs.
+- **🚗 Third-Party Integrations**: Open single points or full multi-waypoint routes directly in **Google Maps** or **Komoot Tour Planner**.
+- **📲 Mobile Installable (PWA)**: Install GeoRandom directly to your home screen on iOS and Android as a full-screen native PWA.
+- **☀️ System Theme Support**: Dynamically detects dark/light system preference on load with session-level manual overrides.
 
 ---
 
@@ -52,7 +67,7 @@ You can install **GeoRandom** on your mobile devices and desktop to run it as a 
 
 ### 🤖 On Android (Chrome / Bromite / Brave)
 1. Navigate to [https://futurk.github.io/randomlocation/](https://futurk.github.io/randomlocation/) in your browser.
-2. Tap the **"Add to Home Screen"** banner that appears at the bottom, or click the browser menu (three vertical dots in the top-right/bottom-right) and select **"Install App"**.
+2. Tap the **"Add to Home Screen"** banner that appears at the bottom, or click the browser menu (three vertical dots) and select **"Install App"**.
 
 ### 🍏 On iOS (Safari)
 1. Navigate to [https://futurk.github.io/randomlocation/](https://futurk.github.io/randomlocation/) in Safari.
@@ -69,7 +84,7 @@ You can install **GeoRandom** on your mobile devices and desktop to run it as a 
 
 ### 1. Clone the repository
 ```bash
-git clone https://github.com/pappater/randomlocation.git
+git clone https://github.com/futurk/randomlocation.git
 cd randomlocation
 ```
 
@@ -113,10 +128,13 @@ Deployment is automated via `gh-pages` and Vite:
 ## 📝 Changelog
 
 - **[Version 2.0.0]**
-  - Deprecated and removed legacy `create-react-app` (`react-scripts`).
-  - Migrated the entire build and development pipeline to **Vite** and **Vitest**.
-  - Re-implemented the interface from scratch, introducing floating glassmorphic dashboards, absolute bottom-sheets for mobile, explicit click-to-generate mechanics, interactive map clicks, geofence boundary drawings, and custom vector pins.
-  - Added full **PWA Installability** on Android, iOS, and Desktop with offline capability.
+  - Introduced **Random Route Planner Mode** with multi-waypoint polyline pathing and round-trip support.
+  - Re-engineered sliders with custom **Dual-Thumb Range Sliders** supporting 10km step steps and direct number typing.
+  - Expanded search boundaries from **0 km up to 500 km**.
+  - Added Haversine distance calculations and inline copy buttons inside map popups.
+  - Added **Komoot Tour Planner** and **Google Maps** multi-waypoint integration.
+  - Redesigned mobile UX with an expandable bottom drawer and embedded GPS target button.
+  - Migrated build pipeline from Create React App to **Vite**, **Vitest**, and **Vite PWA**.
 - **[Version 1.1.0]** Added custom radius input and improved map responsiveness.
 - **[Version 1.0.0]** Initial release built using create-react-app.
 
