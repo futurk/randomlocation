@@ -52,44 +52,46 @@ const PopupCopyButton: React.FC<{ lat: number; lng: number }> = ({ lat, lng }) =
   );
 };
 
-// Custom DivIcon for Center point (Blue pulsing beacon)
+// Custom DivIcon for Center point (Blue pulsing beacon with 48px touch target)
 const centerIcon = L.divIcon({
   html: `
-    <div class="relative flex items-center justify-center w-8 h-8">
+    <div class="relative flex items-center justify-center w-12 h-12 cursor-pointer">
       <div class="absolute w-8 h-8 rounded-full bg-blue-500 opacity-30 animate-ping"></div>
       <div class="absolute w-4 h-4 rounded-full bg-blue-600 border-2 border-white shadow-lg"></div>
     </div>
   `,
   className: "custom-center-icon",
-  iconSize: [32, 32],
-  iconAnchor: [16, 16],
+  iconSize: [48, 48],
+  iconAnchor: [24, 24],
 });
 
-// Custom DivIcon for Single Random point (Red map pin)
+// Custom DivIcon for Single Random point (Red map pin with 48px touch target)
 const randomIcon = L.divIcon({
   html: `
-    <div class="relative flex items-center justify-center w-10 h-10">
+    <div class="relative flex items-center justify-center w-12 h-12 cursor-pointer">
       <svg class="w-8 h-8 filter drop-shadow-md transform transition-transform duration-300 hover:scale-110" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
         <path d="M12 2C8.13 2 5 5.13 5 9C5 14.25 12 22 12 22C12 22 19 14.25 19 9C19 5.13 15.87 2 12 2ZM12 11.5C10.62 11.5 9.5 10.38 9.5 9C9.5 7.62 10.62 6.5 12 6.5C13.38 6.5 14.5 7.62 14.5 9C14.5 10.38 13.38 11.5 12 11.5Z" fill="#EF4444"/>
       </svg>
     </div>
   `,
   className: "custom-random-icon",
-  iconSize: [40, 40],
-  iconAnchor: [20, 36],
+  iconSize: [48, 48],
+  iconAnchor: [24, 42],
 });
 
-// Custom DivIcon for Route Waypoints (Numbered badges)
+// Custom DivIcon for Route Waypoints (Numbered badges with 48px touch target)
 const createWaypointIcon = (index: number) =>
   L.divIcon({
     html: `
-      <div class="relative flex items-center justify-center w-7 h-7 rounded-full bg-indigo-600 text-white font-bold text-xs shadow-lg border-2 border-white transform transition-transform hover:scale-110">
-        ${index + 1}
+      <div class="relative flex items-center justify-center w-12 h-12 cursor-pointer">
+        <div class="relative flex items-center justify-center w-7 h-7 rounded-full bg-indigo-600 text-white font-bold text-xs shadow-lg border-2 border-white transform transition-transform hover:scale-110">
+          ${index + 1}
+        </div>
       </div>
     `,
     className: "custom-waypoint-icon",
-    iconSize: [28, 28],
-    iconAnchor: [14, 14],
+    iconSize: [48, 48],
+    iconAnchor: [24, 24],
   });
 
 // Component to handle map center changes and fitting bounds smoothly
