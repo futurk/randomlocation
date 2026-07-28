@@ -131,12 +131,27 @@ const MapController: React.FC<{
   return null;
 };
 
-// Component to capture click events on the map
+// Component to capture click events on the map safely without resetting center when dismissing popups
 const MapEvents: React.FC<{
   onMapClick: (lat: number, lng: number) => void;
 }> = ({ onMapClick }) => {
+  const popupOpenRef = React.useRef(false);
+
   useMapEvents({
+    popupopen() {
+      popupOpenRef.current = true;
+    },
+    popupclose() {
+      // Delay resetting slightly so the map click that dismissed the popup is consumed safely
+      setTimeout(() => {
+        popupOpenRef.current = false;
+      }, 50);
+    },
     click(e) {
+      // If a popup dialog was open when clicking outside, consume the click to dismiss the popup instead of changing center
+      if (popupOpenRef.current) {
+        return;
+      }
       onMapClick(e.latlng.lat, e.latlng.lng);
     },
   });
