@@ -421,45 +421,6 @@ const RandomLocationMap = () => {
             {/* MODE 2: Route Planner Controls (Dual-Thumb Slider) */}
             {appMode === "route" && (
               <div className="space-y-3.5 mb-5">
-                {/* Waypoints count and Round-trip toggle */}
-                <div className="grid grid-cols-2 gap-3">
-                  {/* Waypoints Count */}
-                  <div className="space-y-1">
-                    <label className="text-[11px] font-semibold opacity-80 block">Waypoints</label>
-                    <div className="flex items-center p-0.5 rounded-lg bg-neutral-100 dark:bg-neutral-950/60 border border-neutral-200 dark:border-neutral-800">
-                      {[1, 2, 3, 4].map((n) => (
-                        <button
-                          key={`wp-btn-${n}`}
-                          onClick={() => setNumWaypoints(n)}
-                          className={`flex-1 py-1 rounded text-xs font-bold transition-all ${
-                            numWaypoints === n
-                              ? "bg-blue-600 text-white shadow"
-                              : "text-neutral-500 hover:text-neutral-900 dark:hover:text-white"
-                          }`}
-                        >
-                          {n}
-                        </button>
-                      ))}
-                    </div>
-                  </div>
-
-                  {/* Round Trip Switch */}
-                  <div className="space-y-1">
-                    <label className="text-[11px] font-semibold opacity-80 block">Route Type</label>
-                    <button
-                      onClick={() => setRoundTrip(!roundTrip)}
-                      className={`w-full py-1.5 px-2 rounded-lg border text-xs font-bold flex items-center justify-center gap-1.5 transition-all ${
-                        roundTrip
-                          ? "bg-indigo-600/15 border-indigo-500/30 text-indigo-400"
-                          : "bg-neutral-100 dark:bg-neutral-950/60 border-neutral-200 dark:border-neutral-800 text-neutral-500"
-                      }`}
-                    >
-                      {roundTrip ? <Repeat size={13} /> : <ArrowRight size={13} />}
-                      <span>{roundTrip ? "Round Trip" : "One Way"}</span>
-                    </button>
-                  </div>
-                </div>
-
                 {/* Total Air Distance Controls */}
                 <div className="space-y-2">
                   <div className="flex justify-between items-center text-xs font-semibold">
@@ -511,6 +472,45 @@ const RandomLocationMap = () => {
                     onMaxChange={handleMaxRouteDistChange}
                     isDarkMode={isDarkMode}
                   />
+                </div>
+
+                {/* Waypoints count and Round-trip toggle */}
+                <div className="grid grid-cols-2 gap-3">
+                  {/* Waypoints Count */}
+                  <div className="space-y-1">
+                    <label className="text-[11px] font-semibold opacity-80 block">Waypoints</label>
+                    <div className="flex items-center p-0.5 rounded-lg bg-neutral-100 dark:bg-neutral-950/60 border border-neutral-200 dark:border-neutral-800">
+                      {[1, 2, 3, 4].map((n) => (
+                        <button
+                          key={`wp-btn-${n}`}
+                          onClick={() => setNumWaypoints(n)}
+                          className={`flex-1 py-1 rounded text-xs font-bold transition-all ${
+                            numWaypoints === n
+                              ? "bg-blue-600 text-white shadow"
+                              : "text-neutral-500 hover:text-neutral-900 dark:hover:text-white"
+                          }`}
+                        >
+                          {n}
+                        </button>
+                      ))}
+                    </div>
+                  </div>
+
+                  {/* Round Trip Switch */}
+                  <div className="space-y-1">
+                    <label className="text-[11px] font-semibold opacity-80 block">Route Type</label>
+                    <button
+                      onClick={() => setRoundTrip(!roundTrip)}
+                      className={`w-full py-1.5 px-2 rounded-lg border text-xs font-bold flex items-center justify-center gap-1.5 transition-all ${
+                        roundTrip
+                          ? "bg-indigo-600/15 border-indigo-500/30 text-indigo-400"
+                          : "bg-neutral-100 dark:bg-neutral-950/60 border-neutral-200 dark:border-neutral-800 text-neutral-500"
+                      }`}
+                    >
+                      {roundTrip ? <Repeat size={13} /> : <ArrowRight size={13} />}
+                      <span>{roundTrip ? "Round Trip" : "One Way"}</span>
+                    </button>
+                  </div>
                 </div>
               </div>
             )}
@@ -836,42 +836,6 @@ const RandomLocationMap = () => {
               {/* Mode 2: Route Planner Controls */}
               {appMode === "route" && (
                 <div className="space-y-4 pt-1">
-                  <div className="grid grid-cols-2 gap-3">
-                    {/* Waypoints Selector */}
-                    <div className="space-y-1.5">
-                      <label className="text-xs font-semibold opacity-80 block">Waypoints</label>
-                      <div className="flex items-center p-1 rounded-xl bg-neutral-100 dark:bg-neutral-950/60 border border-neutral-200 dark:border-neutral-800">
-                        {[1, 2, 3, 4].map((n) => (
-                          <button
-                            key={`m-exp-wp-${n}`}
-                            onClick={() => setNumWaypoints(n)}
-                            className={`flex-1 py-1.5 rounded-lg text-xs font-bold transition-all ${
-                              numWaypoints === n ? "bg-blue-600 text-white shadow" : "text-neutral-500"
-                            }`}
-                          >
-                            {n}
-                          </button>
-                        ))}
-                      </div>
-                    </div>
-
-                    {/* Roundtrip Button */}
-                    <div className="space-y-1.5">
-                      <label className="text-xs font-semibold opacity-80 block">Route Type</label>
-                      <button
-                        onClick={() => setRoundTrip(!roundTrip)}
-                        className={`w-full py-2 px-3 rounded-xl border text-xs font-bold flex items-center justify-center gap-1.5 transition-all ${
-                          roundTrip
-                            ? "bg-indigo-600/15 border-indigo-500/30 text-indigo-400"
-                            : "bg-neutral-100 dark:bg-neutral-950/60 border-neutral-200 dark:border-neutral-800 text-neutral-500"
-                        }`}
-                      >
-                        {roundTrip ? <Repeat size={14} /> : <ArrowRight size={14} />}
-                        <span>{roundTrip ? "Round Trip" : "One Way"}</span>
-                      </button>
-                    </div>
-                  </div>
-
                   {/* Total Distance Sliders */}
                   <div className="space-y-2">
                     <div className="flex justify-between items-center text-xs font-semibold">
@@ -919,6 +883,42 @@ const RandomLocationMap = () => {
                       onMaxChange={handleMaxRouteDistChange}
                       isDarkMode={isDarkMode}
                     />
+                  </div>
+
+                  <div className="grid grid-cols-2 gap-3">
+                    {/* Waypoints Selector */}
+                    <div className="space-y-1.5">
+                      <label className="text-xs font-semibold opacity-80 block">Waypoints</label>
+                      <div className="flex items-center p-1 rounded-xl bg-neutral-100 dark:bg-neutral-950/60 border border-neutral-200 dark:border-neutral-800">
+                        {[1, 2, 3, 4].map((n) => (
+                          <button
+                            key={`m-exp-wp-${n}`}
+                            onClick={() => setNumWaypoints(n)}
+                            className={`flex-1 py-1.5 rounded-lg text-xs font-bold transition-all ${
+                              numWaypoints === n ? "bg-blue-600 text-white shadow" : "text-neutral-500"
+                            }`}
+                          >
+                            {n}
+                          </button>
+                        ))}
+                      </div>
+                    </div>
+
+                    {/* Roundtrip Button */}
+                    <div className="space-y-1.5">
+                      <label className="text-xs font-semibold opacity-80 block">Route Type</label>
+                      <button
+                        onClick={() => setRoundTrip(!roundTrip)}
+                        className={`w-full py-2 px-3 rounded-xl border text-xs font-bold flex items-center justify-center gap-1.5 transition-all ${
+                          roundTrip
+                            ? "bg-indigo-600/15 border-indigo-500/30 text-indigo-400"
+                            : "bg-neutral-100 dark:bg-neutral-950/60 border-neutral-200 dark:border-neutral-800 text-neutral-500"
+                        }`}
+                      >
+                        {roundTrip ? <Repeat size={14} /> : <ArrowRight size={14} />}
+                        <span>{roundTrip ? "Round Trip" : "One Way"}</span>
+                      </button>
+                    </div>
                   </div>
                 </div>
               )}
