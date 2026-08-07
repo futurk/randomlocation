@@ -41,9 +41,9 @@ const RandomLocationMap = () => {
   const [randomLocation, setRandomLocation] = useState<LatLng | null>(null);
 
   // Route Planner Mode State
-  const [numWaypoints, setNumWaypoints] = useState<number>(3); // 1 to 4
-  const [roundTrip, setRoundTrip] = useState<boolean>(true);
-  const [minRouteDist, setMinRouteDist] = useState<number>(10); // in km
+  const [numWaypoints, setNumWaypoints] = useState<number>(2); // 1 to 4
+  const [roundTrip, setRoundTrip] = useState<boolean>(false); // One Way default
+  const [minRouteDist, setMinRouteDist] = useState<number>(0); // in km
   const [maxRouteDist, setMaxRouteDist] = useState<number>(50); // in km
   const [routeResult, setRouteResult] = useState<{
     waypoints: LatLng[];
