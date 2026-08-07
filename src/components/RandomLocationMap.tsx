@@ -753,37 +753,47 @@ const RandomLocationMap = () => {
                 </button>
               </div>
 
-              {/* Mode Switcher */}
-              <div className="space-y-1.5">
-                <label className="text-xs font-semibold uppercase opacity-75">Generator Mode</label>
-                <div className="flex items-center p-1 rounded-xl bg-neutral-100 dark:bg-neutral-950/60 border border-neutral-200 dark:border-neutral-800 text-xs font-bold">
-                  <button
-                    onClick={() => switchMode("single")}
-                    className={`flex-1 py-2 px-3 rounded-lg transition-all flex items-center justify-center gap-1.5 ${
-                      appMode === "single"
-                        ? "bg-blue-600 text-white shadow"
-                        : "text-neutral-500 dark:text-neutral-400"
-                    }`}
-                  >
-                    <MapPin size={14} />
-                    <span>Single Location</span>
-                  </button>
-                  <button
-                    onClick={() => switchMode("route")}
-                    className={`flex-1 py-2 px-3 rounded-lg transition-all flex items-center justify-center gap-1.5 ${
-                      appMode === "route"
-                        ? "bg-blue-600 text-white shadow"
-                        : "text-neutral-500 dark:text-neutral-400"
-                    }`}
-                  >
-                    <RouteIcon size={14} />
-                    <span>Route Planner</span>
-                  </button>
-                </div>
-              </div>
+              {/* 1. Waypoints & Route Type (Route Mode only) */}
+              {appMode === "route" && (
+                <div className="grid grid-cols-2 gap-3 pt-1">
+                  {/* Waypoints Selector */}
+                  <div className="space-y-1.5">
+                    <label className="text-xs font-semibold opacity-80 block">Waypoints</label>
+                    <div className="flex items-center p-1 rounded-xl bg-neutral-100 dark:bg-neutral-950/60 border border-neutral-200 dark:border-neutral-800">
+                      {[1, 2, 3, 4].map((n) => (
+                        <button
+                          key={`m-exp-wp-${n}`}
+                          onClick={() => setNumWaypoints(n)}
+                          className={`flex-1 py-1.5 rounded-lg text-xs font-bold transition-all ${
+                            numWaypoints === n ? "bg-blue-600 text-white shadow" : "text-neutral-500"
+                          }`}
+                        >
+                          {n}
+                        </button>
+                      ))}
+                    </div>
+                  </div>
 
-              {/* Mode 1: Single Radius Controls */}
-              {appMode === "single" && (
+                  {/* Roundtrip Button */}
+                  <div className="space-y-1.5">
+                    <label className="text-xs font-semibold opacity-80 block">Route Type</label>
+                    <button
+                      onClick={() => setRoundTrip(!roundTrip)}
+                      className={`w-full py-2 px-3 rounded-xl border text-xs font-bold flex items-center justify-center gap-1.5 transition-all ${
+                        roundTrip
+                          ? "bg-indigo-600/15 border-indigo-500/30 text-indigo-400"
+                          : "bg-neutral-100 dark:bg-neutral-950/60 border-neutral-200 dark:border-neutral-800 text-neutral-500"
+                      }`}
+                    >
+                      {roundTrip ? <Repeat size={14} /> : <ArrowRight size={14} />}
+                      <span>{roundTrip ? "Round Trip" : "One Way"}</span>
+                    </button>
+                  </div>
+                </div>
+              )}
+
+              {/* 2. Distance Slider */}
+              {appMode === "single" ? (
                 <div className="space-y-3 pt-1">
                   <div className="flex justify-between items-center text-xs font-semibold">
                     <span className="opacity-80">SEARCH BOUNDARIES</span>
@@ -831,97 +841,84 @@ const RandomLocationMap = () => {
                     isDarkMode={isDarkMode}
                   />
                 </div>
-              )}
-
-              {/* Mode 2: Route Planner Controls */}
-              {appMode === "route" && (
-                <div className="space-y-4 pt-1">
-                  {/* Total Distance Sliders */}
-                  <div className="space-y-2">
-                    <div className="flex justify-between items-center text-xs font-semibold">
-                      <span className="opacity-80">TOTAL ROUTE DISTANCE</span>
-                      <div className="flex items-center space-x-1.5 font-mono">
-                        <span className="flex items-center space-x-1">
-                          <span className="text-[10px] text-amber-500 font-bold">MIN</span>
-                          <input
-                            type="number"
-                            min="0"
-                            max="500"
-                            value={minRouteDist}
-                            onChange={(e) => handleMinRouteDistChange(Number(e.target.value))}
-                            className={`w-12 px-1 py-0.5 rounded border text-right font-mono font-bold text-amber-500 text-xs focus:outline-none ${
-                              isDarkMode ? "bg-neutral-950/60 border-neutral-800" : "bg-white border-neutral-300"
-                            }`}
-                          />
-                          <span className="text-[10px] font-bold text-amber-500">km</span>
-                        </span>
-                        <span className="opacity-40">—</span>
-                        <span className="flex items-center space-x-1">
-                          <span className="text-[10px] text-blue-500 font-bold">MAX</span>
-                          <input
-                            type="number"
-                            min="0"
-                            max="500"
-                            value={maxRouteDist}
-                            onChange={(e) => handleMaxRouteDistChange(Number(e.target.value))}
-                            className={`w-12 px-1 py-0.5 rounded border text-right font-mono font-bold text-blue-500 text-xs focus:outline-none ${
-                              isDarkMode ? "bg-neutral-950/60 border-neutral-800" : "bg-white border-neutral-300"
-                            }`}
-                          />
-                          <span className="text-[10px] font-bold text-blue-500">km</span>
-                        </span>
-                      </div>
-                    </div>
-
-                    <DualRangeSlider
-                      min={0}
-                      max={500}
-                      step={10}
-                      minValue={minRouteDist}
-                      maxValue={maxRouteDist}
-                      onMinChange={handleMinRouteDistChange}
-                      onMaxChange={handleMaxRouteDistChange}
-                      isDarkMode={isDarkMode}
-                    />
-                  </div>
-
-                  <div className="grid grid-cols-2 gap-3">
-                    {/* Waypoints Selector */}
-                    <div className="space-y-1.5">
-                      <label className="text-xs font-semibold opacity-80 block">Waypoints</label>
-                      <div className="flex items-center p-1 rounded-xl bg-neutral-100 dark:bg-neutral-950/60 border border-neutral-200 dark:border-neutral-800">
-                        {[1, 2, 3, 4].map((n) => (
-                          <button
-                            key={`m-exp-wp-${n}`}
-                            onClick={() => setNumWaypoints(n)}
-                            className={`flex-1 py-1.5 rounded-lg text-xs font-bold transition-all ${
-                              numWaypoints === n ? "bg-blue-600 text-white shadow" : "text-neutral-500"
-                            }`}
-                          >
-                            {n}
-                          </button>
-                        ))}
-                      </div>
-                    </div>
-
-                    {/* Roundtrip Button */}
-                    <div className="space-y-1.5">
-                      <label className="text-xs font-semibold opacity-80 block">Route Type</label>
-                      <button
-                        onClick={() => setRoundTrip(!roundTrip)}
-                        className={`w-full py-2 px-3 rounded-xl border text-xs font-bold flex items-center justify-center gap-1.5 transition-all ${
-                          roundTrip
-                            ? "bg-indigo-600/15 border-indigo-500/30 text-indigo-400"
-                            : "bg-neutral-100 dark:bg-neutral-950/60 border-neutral-200 dark:border-neutral-800 text-neutral-500"
-                        }`}
-                      >
-                        {roundTrip ? <Repeat size={14} /> : <ArrowRight size={14} />}
-                        <span>{roundTrip ? "Round Trip" : "One Way"}</span>
-                      </button>
+              ) : (
+                <div className="space-y-3 pt-1">
+                  <div className="flex justify-between items-center text-xs font-semibold">
+                    <span className="opacity-80">TOTAL ROUTE DISTANCE</span>
+                    <div className="flex items-center space-x-1.5 font-mono">
+                      <span className="flex items-center space-x-1">
+                        <span className="text-[10px] text-amber-500 font-bold">MIN</span>
+                        <input
+                          type="number"
+                          min="0"
+                          max="500"
+                          value={minRouteDist}
+                          onChange={(e) => handleMinRouteDistChange(Number(e.target.value))}
+                          className={`w-12 px-1 py-0.5 rounded border text-right font-mono font-bold text-amber-500 text-xs focus:outline-none ${
+                            isDarkMode ? "bg-neutral-950/60 border-neutral-800" : "bg-white border-neutral-300"
+                          }`}
+                        />
+                        <span className="text-[10px] font-bold text-amber-500">km</span>
+                      </span>
+                      <span className="opacity-40">—</span>
+                      <span className="flex items-center space-x-1">
+                        <span className="text-[10px] text-blue-500 font-bold">MAX</span>
+                        <input
+                          type="number"
+                          min="0"
+                          max="500"
+                          value={maxRouteDist}
+                          onChange={(e) => handleMaxRouteDistChange(Number(e.target.value))}
+                          className={`w-12 px-1 py-0.5 rounded border text-right font-mono font-bold text-blue-500 text-xs focus:outline-none ${
+                            isDarkMode ? "bg-neutral-950/60 border-neutral-800" : "bg-white border-neutral-300"
+                          }`}
+                        />
+                        <span className="text-[10px] font-bold text-blue-500">km</span>
+                      </span>
                     </div>
                   </div>
+
+                  <DualRangeSlider
+                    min={0}
+                    max={500}
+                    step={10}
+                    minValue={minRouteDist}
+                    maxValue={maxRouteDist}
+                    onMinChange={handleMinRouteDistChange}
+                    onMaxChange={handleMaxRouteDistChange}
+                    isDarkMode={isDarkMode}
+                  />
                 </div>
               )}
+
+              {/* 3. Mode Switcher */}
+              <div className="space-y-1.5">
+                <label className="text-xs font-semibold uppercase opacity-75">Generator Mode</label>
+                <div className="flex items-center p-1 rounded-xl bg-neutral-100 dark:bg-neutral-950/60 border border-neutral-200 dark:border-neutral-800 text-xs font-bold">
+                  <button
+                    onClick={() => switchMode("single")}
+                    className={`flex-1 py-2 px-3 rounded-lg transition-all flex items-center justify-center gap-1.5 ${
+                      appMode === "single"
+                        ? "bg-blue-600 text-white shadow"
+                        : "text-neutral-500 dark:text-neutral-400"
+                    }`}
+                  >
+                    <MapPin size={14} />
+                    <span>Single Location</span>
+                  </button>
+                  <button
+                    onClick={() => switchMode("route")}
+                    className={`flex-1 py-2 px-3 rounded-lg transition-all flex items-center justify-center gap-1.5 ${
+                      appMode === "route"
+                        ? "bg-blue-600 text-white shadow"
+                        : "text-neutral-500 dark:text-neutral-400"
+                    }`}
+                  >
+                    <RouteIcon size={14} />
+                    <span>Route Planner</span>
+                  </button>
+                </div>
+              </div>
 
               {/* Done Button */}
               <button
