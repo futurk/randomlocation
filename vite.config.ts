@@ -18,8 +18,8 @@ export default defineConfig({
         background_color: '#0a0a0a',
         display: 'standalone',
         orientation: 'portrait',
-        scope: '/randomlocation/',
-        start_url: '/randomlocation/',
+        scope: '/georandom/',
+        start_url: '/georandom/',
         icons: [
           {
             src: 'logo192.png',
@@ -36,7 +36,7 @@ export default defineConfig({
       }
     })
   ],
-  base: '/randomlocation/',
+  base: '/georandom/',
   build: {
     outDir: 'dist',
   },

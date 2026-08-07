@@ -32,8 +32,46 @@ import {
 
 type AppMode = "single" | "route";
 
+const getModeFromHash = (): AppMode => {
+  if (typeof window !== "undefined") {
+    const hash = window.location.hash.toLowerCase();
+    if (hash.includes("route")) {
+      return "route";
+    }
+  }
+  return "single";
+};
+
 const RandomLocationMap = () => {
-  const [appMode, setAppMode] = useState<AppMode>("single");
+  const [appMode, setAppMode] = useState<AppMode>(getModeFromHash);
+
+  // Sync mode changes to URL hash (#/location vs #/route)
+  const switchMode = (mode: AppMode) => {
+    setAppMode(mode);
+    if (typeof window !== "undefined") {
+      const targetHash = mode === "route" ? "#/route" : "#/location";
+      if (window.location.hash !== targetHash) {
+        window.history.replaceState(null, "", targetHash);
+      }
+    }
+  };
+
+  // Sync URL hash changes on browser Back/Forward navigation
+  React.useEffect(() => {
+    if (typeof window === "undefined") return;
+
+    if (!window.location.hash) {
+      window.history.replaceState(null, "", "#/location");
+    }
+
+    const handleHashChange = () => {
+      const newMode = getModeFromHash();
+      setAppMode(newMode);
+    };
+
+    window.addEventListener("hashchange", handleHashChange);
+    return () => window.removeEventListener("hashchange", handleHashChange);
+  }, []);
 
   // Single Location Mode State
   const [minRadius, setMinRadius] = useState<number>(2); // Default min 2 km
@@ -208,7 +246,7 @@ const RandomLocationMap = () => {
 
         <div className="flex items-center space-x-3">
           <a
-            href="https://github.com/futurk/randomlocation"
+            href="https://github.com/futurk/georandom"
             target="_blank"
             rel="noopener noreferrer"
             className={`p-2.5 rounded-xl border transition-all duration-300 flex items-center justify-center ${
@@ -261,7 +299,7 @@ const RandomLocationMap = () => {
             {/* Mode Switcher */}
             <div className="flex items-center p-1 rounded-xl bg-neutral-100 dark:bg-neutral-950/60 border border-neutral-200 dark:border-neutral-800 text-xs font-bold mb-4">
               <button
-                onClick={() => setAppMode("single")}
+                onClick={() => switchMode("single")}
                 className={`flex-1 py-1.5 px-3 rounded-lg transition-all flex items-center justify-center gap-1.5 ${
                   appMode === "single"
                     ? "bg-blue-600 text-white shadow-md"
@@ -272,7 +310,7 @@ const RandomLocationMap = () => {
                 <span>Single Location</span>
               </button>
               <button
-                onClick={() => setAppMode("route")}
+                onClick={() => switchMode("route")}
                 className={`flex-1 py-1.5 px-3 rounded-lg transition-all flex items-center justify-center gap-1.5 ${
                   appMode === "route"
                     ? "bg-blue-600 text-white shadow-md"
@@ -720,7 +758,7 @@ const RandomLocationMap = () => {
                 <label className="text-xs font-semibold uppercase opacity-75">Generator Mode</label>
                 <div className="flex items-center p-1 rounded-xl bg-neutral-100 dark:bg-neutral-950/60 border border-neutral-200 dark:border-neutral-800 text-xs font-bold">
                   <button
-                    onClick={() => setAppMode("single")}
+                    onClick={() => switchMode("single")}
                     className={`flex-1 py-2 px-3 rounded-lg transition-all flex items-center justify-center gap-1.5 ${
                       appMode === "single"
                         ? "bg-blue-600 text-white shadow"
@@ -731,7 +769,7 @@ const RandomLocationMap = () => {
                     <span>Single Location</span>
                   </button>
                   <button
-                    onClick={() => setAppMode("route")}
+                    onClick={() => switchMode("route")}
                     className={`flex-1 py-2 px-3 rounded-lg transition-all flex items-center justify-center gap-1.5 ${
                       appMode === "route"
                         ? "bg-blue-600 text-white shadow"

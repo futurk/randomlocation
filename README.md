@@ -6,7 +6,7 @@
 
 The application features a premium **glassmorphic dashboard**, expandable mobile bottom drawers, on-demand geolocation, interactive map clicks, dual geofence boundaries, and direct integrations with **Google Maps** and **Komoot Tour Planner**.
 
-Visit the live application at [https://futurk.github.io/randomlocation/](https://futurk.github.io/randomlocation/) to see it in action.
+Visit the live application at [https://futurk.github.io/georandom/](https://futurk.github.io/georandom/) to see it in action.
 
 ---
 
@@ -66,16 +66,16 @@ Visit the live application at [https://futurk.github.io/randomlocation/](https:/
 You can install **GeoRandom** on your mobile devices and desktop to run it as a standalone, fullscreen native application:
 
 ### 🤖 On Android (Chrome / Bromite / Brave)
-1. Navigate to [https://futurk.github.io/randomlocation/](https://futurk.github.io/randomlocation/) in your browser.
+1. Navigate to [https://futurk.github.io/georandom/](https://futurk.github.io/georandom/) in your browser.
 2. Tap the **"Add to Home Screen"** banner that appears at the bottom, or click the browser menu (three vertical dots) and select **"Install App"**.
 
 ### 🍏 On iOS (Safari)
-1. Navigate to [https://futurk.github.io/randomlocation/](https://futurk.github.io/randomlocation/) in Safari.
+1. Navigate to [https://futurk.github.io/georandom/](https://futurk.github.io/georandom/) in Safari.
 2. Tap the **Share** button (box with an upward arrow 📤) in the bottom toolbar.
 3. Scroll down and tap **"Add to Home Screen"** (plus icon ➕).
 
 ### 💻 On Desktop (Chrome / Edge / Opera)
-1. Navigate to [https://futurk.github.io/randomlocation/](https://futurk.github.io/randomlocation/).
+1. Navigate to [https://futurk.github.io/georandom/](https://futurk.github.io/georandom/).
 2. Click the **Install** monitor icon in the right-hand side of your browser's address bar.
 
 ---
@@ -84,8 +84,8 @@ You can install **GeoRandom** on your mobile devices and desktop to run it as a 
 
 ### 1. Clone the repository
 ```bash
-git clone https://github.com/futurk/randomlocation.git
-cd randomlocation
+git clone https://github.com/futurk/georandom.git
+cd georandom
 ```
 
 ### 2. Install dependencies
@@ -98,7 +98,7 @@ To launch the Vite development server:
 ```bash
 npm run dev
 ```
-Open your browser and navigate to `http://localhost:5173/randomlocation/`.
+Open your browser and navigate to `http://localhost:5173/georandom/`.
 
 ---
 
